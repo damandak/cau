@@ -1,0 +1,80 @@
+{% extends "headers.html" %}
+{% load static %}
+
+{% block content %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+        <strong {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+  <div class="container justify-content-md-center text-dark">
+    <div class="row">
+      <h4 class="mt-4 mb-3">{{ title }}</h4> 
+    </div>
+    <a class="btn btn-primary" href="{% url 'avisos:new_shortnotice' %}">Nuevo Aviso Rápido</a>
+    <a class="btn btn-primary disabled" href="{% url 'index' %}">Nuevo Aviso Normal</a>
+    <div class="row justify-content-md-center pt-3 pb-3 mt-3 mb-3 bg-light rounded" style="overflow-x: auto;">
+      {% if avisos %}
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Lugar</th>
+              <th scope="col">Categoría</th>
+              <th scope="col">Ruta(s)</th>
+              <th scope="col">Cordada</th>
+              <th scope="col">Inicio</th>
+              <th scope="col">Fecha Máxima</th>
+              <th scope="col">Contacto CAU</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for aviso in avisos %}
+              <tr>
+                <td class="table_link"><a class="" href="{% url 'avisos:detail_notice' aviso.id %}">{{ aviso.shortnotice.location }}</a></td>
+                <td>{{ aviso.category }}</td>
+                <td>{{ aviso.shortnotice.route }}</td>
+                <td>
+                  {% for participant in aviso.participants.all %}
+                    {{ participant }} <br>
+                  {% endfor %}
+                </td>
+                <td>{{ aviso.start_date|date:'d-m-y, H:i' }}</td>
+                <td>{{ aviso.max_end_date|date:'d-m-y, H:i' }}</td>
+                <td>{{ aviso.cau_contact }}</td>
+                <td>{{ aviso.get_status_display }}</td>
+                <td style="width: 200px;"> 
+                  {% if user.member in aviso.participants.all %}
+                    {% if aviso.status == 0 %}
+                      <a class="btn btn-primary disabled" href="" data-toggle="tooltip" data-placement="top" title="Publicar Aviso"><i class="bi-send-check-fill"></i></a>
+                    {% endif %}
+                    <a class="btn btn-secondary" href="{% url 'avisos:edit_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Editar Aviso"><i class="bi-pencil-square"></i></a>
+                    <a class="btn btn-warning disabled" href="" data-toggle="tooltip" data-placement="top" title="Eliminar Aviso"><i class="bi-trash3-fill"></i></a>
+                  {% endif %}
+                  <a class="btn btn-info disabled" href="" data-toggle="tooltip" data-placement="top" title="Descargar Aviso"><i class="bi-download"></i></a>   
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="alert alert-info" role="alert">
+          <h4 class="alert-heading">No hay avisos registrados</h4>
+          <p>Puedes agregar uno haciendo click en el botón "Nuevo Aviso Rápido" o "Nuevo Aviso Normal" </p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+{% endblock %}

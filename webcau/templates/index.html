@@ -1,0 +1,28 @@
+{% extends "headers.html" %}
+
+{% block content %}
+<h1 class="m-4">Accesos Directos</h1>
+  {% if emergencycontacts.count == 0 %}  
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      Recuerda ingresar <strong>al menos un contacto de emergencia</strong> para poder crear tus avisos de salida.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
+  {% if member.medicalrecord.pending %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>Recuerda ingresar tu información médica</strong> para poder crear avisos de salida.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
+  {% if cars is empty %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>Recuerda ingresar los vehículos que usas</strong> para poder agregarlos a tus avisos de salida.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
+<div class="container list-group" style="width:25rem;">
+  <a href="{% url 'avisos:new_shortnotice' %}" class="list-group-item list-group-item-action">Aviso Rápido</a>
+  <a class="list-group-item list-group-item-action disabled">Aviso Largo</a>
+</div>
+
+{% endblock %}

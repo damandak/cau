@@ -1,0 +1,33 @@
+<form hx-post="{{ request.path }}" class="modal-content">
+  {% csrf_token %}
+  <div class="modal-header">
+    <h5 class="modal-title">Enviar Aviso</h5>
+  </div>
+  <div class="modal-body">
+    {{ form.as_p }}
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-bs-dismiss="modal">Cancel</button>
+    <button type="submit">Save</button>
+  </div>
+</form>
+
+<div class="modal inmodal" id="modal_register_edit" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+  <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
+                  <span class="sr-only">{% trans 'Close' %}</span>
+              </button>
+              <h4 class="modal-title"><i class="fa fa-laptop modal-icon"></i> {% trans 'Register edit' %}</h4>
+              <small class="font-bold">{% trans 'Insert new values to modify Regiser attributes as required' %}</small>
+          </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-white" data-dismiss="modal">{% trans 'Close' %}</button>
+              <button id="btn-save" type="button" class="btn btn-primary">{% trans 'Save changes' %}</button>
+          </div>
+      </div>
+  </div>
+</div>

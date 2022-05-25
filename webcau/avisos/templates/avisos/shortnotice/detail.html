@@ -1,0 +1,181 @@
+{% extends "headers.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="container justify-content-md-center text-dark">
+    <div class="row mt-4">  
+      <h4 class="mt-1 mb-2">
+        {{ aviso.shortnotice }}<br>
+      </h4>
+    </div>
+    <div class="btn-group btn-group-lg mb-3" role="group" style="width:25rem;">
+      {% if aviso.status == 0 %}
+        <a class="btn btn-primary" href="{% url 'avisos:send_shortnotice' aviso.id %}"><i class="bi-send-check-fill"></i> Publicar</a>
+      {% elif aviso.status == 1 or aviso.status == 2 or aviso.status == 3 %}
+        <a class="btn btn-success" href=""><i class="bi-geo-alt-fill"></i> Avisar Llegada</a>
+      {% endif %}
+      <a class="btn btn-secondary" href="{% url 'avisos:edit_shortnotice' aviso.id %}"><i class="bi-pencil-square"></i> Editar</a>
+      {% if aviso.status == 0 %}
+        <a class="btn btn-danger" href=""><i class="bi-trash"></i> Eliminar</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row justify-content-md-center p-3  bg-light rounded">
+    <div style="width:25rem;">
+      
+      <h6>Fecha Máxima de Llegada: </h6><h5>{{ aviso.max_end_date|date:"H:i - d/m/Y" }}</h5>
+      {% if aviso.time_left_for_arrival <= 0 %}
+        <p><b>Llegada Atrasada</b></p>
+      {% endif %}
+      <h4 class="mb-3">
+        {% if aviso.status == 0 %}
+            <span class="badge bg-secondary">
+          {% elif aviso.status == 1 %}
+            <span class="badge bg-primary">
+          {% elif aviso.status == 2 %}
+            <span class="badge bg-info">
+          {% elif aviso.status == 3 %}
+            <span class="badge bg-warning">
+          {% elif aviso.status == 4 %}
+            <span class="badge bg-success">
+          {% elif aviso.status == 5 %}
+            <span class="badge bg-light">
+          {% endif %}
+          {{ aviso.get_status_display }}</span>
+      </h4>
+      <table class="table table-sm mt-3">
+        <tbody>
+          <tr>
+            <th scope="row">Categoría</th>
+            <td>{{ aviso.category }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Lugar</th>
+            <td>{{ aviso.shortnotice.location }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Ruta</th>
+            <td>{{ aviso.shortnotice.route }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Fecha de Salida</th>
+            <td>{{ aviso.shortnotice.start_date|date:"d/m/Y" }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Hora de Salida</th>
+            <td>{{ aviso.shortnotice.start_date|date:"H:i" }}</td>
+          <tr>
+            <th scope="row">Contacto CAU</th>
+            <td>{{ aviso.cau_contact }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Transporte</th>
+            <td>
+              {% if aviso.cars %}
+                {% for car in aviso.cars.all %}
+                  {{ car.name }}
+                {% endfor %}
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row justify-content-md-center table-responsive" style="">
+      <table class="table table-lg" style="text-align:left;">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col" colspan="2" style="border-right: 1px white solid; text-align: center;">Cordada</th>
+            <th scope="col" colspan="4" style="text-align: center;">Contacto de Emergencia</th>
+          </tr>
+        </thead>
+        <thead>
+          <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Teléfono</th>
+            <th scope="col">Nombre Contacto</th>
+            <th scope="col">Teléfono Contacto</th>
+            <th scope="col">Email Contacto</th>
+            <th scope="col">Parentesco Contacto</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for member in aviso.participants.all %}
+            <tr>
+              <td>{{ member }}</td>
+              <td>{{ member.phone_number }}</td>
+              <td>{{ member.main_emergencycontact }}</td>
+              <td>{{ member.main_emergencycontact.phone_number }}</td>
+              <td>{{ member.main_emergencycontact.email }}</td>
+              <td>{{ member.main_emergencycontact.relationship }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <table class="table table-sm">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col" colspan="6" style="text-align: center;">Vehículos</th>
+          </tr>
+        </thead>
+        <thead>
+          <tr>
+            <th scope="col">Socio</th>
+            <th scope="col">Alias</th>
+            <th scope="col">Marca</th>
+            <th scope="col">Modelo</th>
+            <th scope="col">Color</th>
+            <th scope="col">Lugar de estacionamiento</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for car in aviso.cars.all %}
+            <tr>
+              <td>{{ car.member }}</td>
+              <td>{{ car.alias }}</td>
+              <td>{{ car.brand }}</td>
+              <td>{{ car.model }}</td>
+              <td>{{ car.color }}</td>
+              <td></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+     <table class="table table-sm">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col" colspan="4" style="text-align: center;">Información Médica</th>
+          </tr>
+        </thead>
+        <thead>
+          <tr>
+            <th scope="col">Socio</th>
+            <th scope="col">Enfermedades</th>
+            <th scope="col">Medicamentos</th>
+            <th scope="col">Riesgos</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for member in aviso.participants.all %}
+            {% if not member.medicalrecord.no_medical_record %}
+              <tr>
+                <td>{{ member }}</td>
+                <td>{{ member.medicalrecord.sicknesses }}</td>
+                <td>{{ member.medicalrecord.medications }}</td>
+                <td>{{ member.medicalrecord.risks }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+ 
+{% endblock %}
+
