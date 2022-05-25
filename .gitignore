@@ -5,6 +5,5 @@ myvenv
 db.sqlite3  
 /webcau/static  
 .DS_Store
-/cau/bin
-/cau/lib
+/cau
 /webcau/node_modules
