@@ -1,150 +1,11 @@
-import email
-from email.policy import default
-from django.db import models
-from django.urls import reverse
-from django.contrib.auth.models import User
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
-from annoying.fields import AutoOneToOneField
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 from django.utils import timezone as tz
-from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
-
-
-def file_size(value): 
-    limit = 2 * 1024 * 1024
-    if value.size > limit:
-        raise ValidationError('Archivo excede los 2MB')
-
-class BaseModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
-
-#   Member model. Pending: member status, image, signature, etc.
-class Member(BaseModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    middlename = models.CharField(max_length=100, blank=True)
-    first_surname = models.CharField(max_length=100)
-    second_surname = models.CharField(max_length=100, blank=True)
-    rut = models.CharField(max_length=20)
-    birth_date = models.DateField(null=True, blank=True)
-    enrollment_date = models.DateField(null=True, blank=True)
-    phone_number = models.CharField(max_length=20, null=True, blank=True)
-    use_middlename = models.BooleanField(default=False)
-    use_second_surname = models.BooleanField(default=False)
-
-    profile_image = models.ImageField(upload_to='profile_images', blank=True, validators =[file_size], default = 'default.png')
-
-    def __str__(self):
-        return self.user.username
-
-    def get_absolute_url(self):
-        return reverse('member-detail', kwargs={'pk': self.pk})
-    
-    def __str__(self):
-        if self.name and self.first_surname:
-            middle = (self.middlename + " ") if self.use_middlename else ""
-            last = self.second_surname if self.use_second_surname else ""
-            names = self.name + " " + middle
-            surnames = self.first_surname + " " + last
-            return names + surnames
-        return self.user.username
-
-    @property
-    def main_emergencycontact(self):
-        return EmergencyContact.objects.filter(member=self, main_contact=True).first()
-
-@receiver(post_save, sender=User)
-def create_user_member(sender, instance, created, **kwargs):
-    if created:
-        Member.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_user_member(sender, instance, **kwargs):
-    instance.member.save()
-
-class ClubBoard(BaseModel):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-    members = models.ManyToManyField(Member, blank=True, through='ClubBoardMember')
-
-    def __str__(self):
-        return self.name
-
-class ClubBoardMember(BaseModel):
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
-    clubboard = models.ForeignKey(ClubBoard, on_delete=models.CASCADE)
-    position = models.CharField(max_length=100)
-    receivenotices = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.position + " en " + self.clubboard.name
-
-class Committee(BaseModel):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-    members = models.ManyToManyField(Member, blank=True, through='CommitteeMember')
-
-    def __str__(self):
-        return self.name
-
-class CommitteeMember(BaseModel):
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
-    committee = models.ForeignKey(Committee, on_delete=models.CASCADE)
-    position = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.position + " en " + self.committee.name
-
-class EmailRecipient(BaseModel):
-    email = models.EmailField(max_length=254)
-    def __str__(self):
-        return str(self.email)
-
-class Car(BaseModel):
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
-    alias = models.CharField(max_length=100)
-    brand = models.CharField(max_length=100)
-    model = models.CharField(max_length=100)
-    year = models.IntegerField()
-    color = models.CharField(max_length=100)
-    license_plate = models.CharField(max_length=100)
-    def __str__(self):
-        if self.alias:
-            return str(self.member.name) +  " - " + str(self.alias) + " - " + str(self.license_plate)
-        else:
-            return " - " + str(self.member.name) + " - " + str(self.license_plate)
-
-class MedicalRecord(BaseModel):
-    member = AutoOneToOneField(Member, primary_key=True, on_delete=models.CASCADE)
-    no_medical_record = models.BooleanField(default=False)
-    sicknesses = models.TextField(null=True, blank=True)
-    medications = models.TextField(null=True, blank=True)
-    risks = models.TextField(null=True, blank=True)
-    
-    def __str__(self):
-        return str(self.member) + " - " + str(self.sicknesses)
-    
-    def pending(self):
-        if self.no_medical_record:
-            return False
-        if self.sicknesses or self.medications or self.risks:
-            return False
-        return True
-
-@receiver(post_save, sender=Member)
-def create_member_medical(sender, instance, created, **kwargs):
-    if created:
-        MedicalRecord.objects.create(member=instance)
-
-@receiver(post_save, sender=Member)
-def save_member_medical(sender, instance, **kwargs):
-    instance.medicalrecord.save()
+from .base import *
+from .member import Member, EmailRecipient, ClubBoard, ClubBoardMember
+from .car import Car
 
 class NoticeCategory(BaseModel):
     name = models.CharField(max_length=100)
@@ -179,6 +40,11 @@ class BaseNotice(BaseModel):
     email_recipients = models.ManyToManyField(EmailRecipient, blank=True, related_name="email_recipients")
     sent_date = models.DateTimeField(null=True, blank=True)
     sent_by = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="sent_by", blank=True, null=True)
+    arrival_confirmation_date = models.DateTimeField(null=True, blank=True)
+    arrival_confirmation_by = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="arrival_confirmation_by", blank=True, null=True)
+
+    def allowed_to_edit(self):
+        return list(self.participants.all()) + [self.cau_contact]
 
     def include_email(self, email):
         if EmailRecipient.objects.filter(email=email).exists():
@@ -319,25 +185,3 @@ class ShortNotice(BaseNotice):
 
     def __str__(self):
         return self.category.name + ": " + self.location + " - " + self.route
-
-class EmergencyContact(BaseModel):
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, null=True, blank=True)
-    phone_number = models.CharField(max_length=20)
-    email = models.EmailField(max_length=254)
-    main_contact = models.BooleanField(default=False)
-    relationship = models.CharField(max_length=100, null=True, blank=True)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['main_contact', 'member'], condition=models.Q(main_contact=True), name='unique_main_contact'),
-        ]
-
-    def __str__(self):
-        return str(self.name)
-
-@receiver(pre_save, sender=EmergencyContact)
-def set_main_contact(sender, instance, **kwargs):
-    if instance.main_contact:
-        EmergencyContact.objects.filter(main_contact=True, member=instance.member).update(main_contact=False)
-

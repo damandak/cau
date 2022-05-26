@@ -1,6 +1,28 @@
 {% extends "headers.html" %}
 
 {% block content %}
+
+
+{% for aviso in active_notices %}
+  <div class="card text-center mt-3">
+    <div class="card-header">
+      {% if aviso.status == 2 %}
+        Tienes una Salida Activa
+      {% else %}
+        <i class="bi bi-house-fill"></i><b>Tienes una Salida ATRASADA</b>
+      {% endif %}
+    </div>
+    <div class="card-body">
+      <h5 class="card-title"><a class="" href="{% url 'avisos:detail_notice' aviso.id %}">Aviso de Salida: {{ aviso.shortnotice.location }}</a></h5>
+      <p class="card-text">Si ya llegó la cordada, no te olvides de avisar la llegada.</p>
+      <a class="btn btn-success" href="{% url 'avisos:arrive_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Avisar Llegada"><i class="bi bi-house-fill"></i> Avisar Llegada</a>
+    </div>
+    <div class="card-footer text-muted">
+      Llegada Máxima: <h5>{{ aviso.max_end_date|date:"H:i - d/m/Y" }}</h5>
+    </div>
+  </div>
+{% endfor %}
+
 <h1 class="m-4">Accesos Directos</h1>
   {% if emergencycontacts.count == 0 %}  
     <div class="alert alert-danger alert-dismissible fade show" role="alert">

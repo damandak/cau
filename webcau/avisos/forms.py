@@ -213,5 +213,23 @@ class SendNoticeForm(forms.ModelForm):
             instance.publish_notice(mail_content = mail_content)
 
         return instance
+
+class ArrivedNoticeForm(forms.ModelForm):
+    class Meta:
+        model = ShortNotice
+        fields = ()
+        widgets = {
+            'arrival_confirmation_date': forms.HiddenInput(),
+            'arrival_confirmation_by': forms.HiddenInput(),
+        }
+        exclude = ['arrival_confirmation_date', 'arrival_confirmation_by']
+        action = forms.CharField(max_length=60, widget=forms.HiddenInput())
     
-    
+    def save(self, commit=True):
+        instance = super(ArrivedNoticeForm, self).save(commit = False)
+
+        if commit:
+            instance.save()
+            instance.notify_arrival()
+
+        return instance

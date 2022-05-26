@@ -9,14 +9,16 @@
       </h4>
     </div>
     <div class="btn-group btn-group-lg mb-3" role="group" style="width:25rem;">
-      {% if aviso.status == 0 %}
-        <a class="btn btn-primary" href="{% url 'avisos:send_shortnotice' aviso.id %}"><i class="bi-send-check-fill"></i> Publicar</a>
-      {% elif aviso.status == 1 or aviso.status == 2 or aviso.status == 3 %}
-        <a class="btn btn-success" href=""><i class="bi-geo-alt-fill"></i> Avisar Llegada</a>
-      {% endif %}
-      <a class="btn btn-secondary" href="{% url 'avisos:edit_shortnotice' aviso.id %}"><i class="bi-pencil-square"></i> Editar</a>
-      {% if aviso.status == 0 %}
-        <a class="btn btn-danger" href=""><i class="bi-trash"></i> Eliminar</a>
+      {% if user.member in aviso.allowed_to_edit %}  
+        {% if aviso.status == 0 %}
+          <a class="btn btn-primary" href="{% url 'avisos:send_shortnotice' aviso.id %}"><i class="bi-send-check-fill"></i> Publicar</a>
+        {% elif aviso.status == 1 or aviso.status == 2 or aviso.status == 3 %}
+          <a class="btn btn-success" href="{% url 'avisos:arrive_shortnotice' aviso.id %}"><i class="bi-geo-alt-fill"></i> Avisar Llegada</a>
+        {% endif %}
+        <a class="btn btn-secondary" href="{% url 'avisos:edit_shortnotice' aviso.id %}"><i class="bi-pencil-square"></i> Editar</a>
+        {% if aviso.status == 0 %}
+          <a class="btn btn-danger" href=""><i class="bi-trash"></i> Eliminar</a>
+        {% endif %}
       {% endif %}
     </div>
   </div>

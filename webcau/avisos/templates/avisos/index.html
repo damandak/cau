@@ -49,9 +49,12 @@
                 <td>{{ aviso.cau_contact }}</td>
                 <td>{{ aviso.get_status_display }}</td>
                 <td style="width: 200px;"> 
-                  {% if user.member in aviso.participants.all %}
+                  {% if user.member in aviso.allowed_to_edit %}
                     {% if aviso.status == 0 %}
-                      <a class="btn btn-primary disabled" href="" data-toggle="tooltip" data-placement="top" title="Publicar Aviso"><i class="bi-send-check-fill"></i></a>
+                      <a class="btn btn-primary" href="{% url 'avisos:send_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Publicar Aviso"><i class="bi-send-check-fill"></i></a>
+                    {% endif %}
+                    {% if aviso.status == 2 or aviso.status == 3 %}
+                      <a class="btn btn-success" href="{% url 'avisos:arrive_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Avisar Llegada"><i class="bi bi-house-fill"></i></a>
                     {% endif %}
                     <a class="btn btn-secondary" href="{% url 'avisos:edit_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Editar Aviso"><i class="bi-pencil-square"></i></a>
                     <a class="btn btn-warning disabled" href="" data-toggle="tooltip" data-placement="top" title="Eliminar Aviso"><i class="bi-trash3-fill"></i></a>

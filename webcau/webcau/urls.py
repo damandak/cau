@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import include, path
-from avisos import views
-from avisos.views import IndexView, UpdateAccountView, UpdateMedicalView, CarsView, UpdateCarView, CreateCarView, DeleteCarView, EmergencyContactsView, CreateEmergencyContactView, UpdateEmergencyContactView, DeleteEmergencyContactView
+from avisos.views.base import IndexView
+from avisos.views.account import UpdateAccountView, UpdateMedicalView, CarsView, CreateCarView, UpdateCarView, DeleteCarView, EmergencyContactsView, CreateEmergencyContactView, UpdateEmergencyContactView, DeleteEmergencyContactView
 from django.conf import settings
 from django.conf.urls.static import static
 

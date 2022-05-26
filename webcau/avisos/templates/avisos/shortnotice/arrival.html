@@ -1,0 +1,23 @@
+{% extends "headers.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="container justify-content-md-center text-dark">
+    <div class="row">
+      <h4 class="mt-4 mb-3">Notificar Llegada</h4>
+    </div>
+    <div class="row">
+      <p style="width:25rem;">Recuerda que la llegada se debe notificar una vez que haya confirmación de que la cordada está a salvo en el transporte de regreso o en sus casas.</p>
+    </div>     
+    <div class="row justify-content-md-center bg-light rounded text-start ">
+      <div class="form-group" style="width:25rem;">
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary mb-3">Guardar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+    
+{% endblock %}
