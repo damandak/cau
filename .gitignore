@@ -8,3 +8,6 @@ db.sqlite3
 .env
 /cau
 /webcau/node_modules
+dump.rdb
+../erl_crash.dump
+../dump.rdb
