@@ -33,7 +33,7 @@
           <tbody>
             {% for car in cars %}
               <tr>
-                <td>{{ car.name }}</td>
+                <td>{{ car.alias }}</td>
                 <td>{{ car.brand }}</td>
                 <td>{{ car.model }}</td>
                 <td>{{ car.year }}</td>
@@ -41,7 +41,7 @@
                 <td>{{ car.license_plate }}</td>
                 <td>
                   <a class="btn btn-secondary" href="{% url 'edit_car' car.id %}" data-toggle="tooltip" data-placement="top" title="Editar Vehículo"><i class="bi-pencil-square"></i></a>
-                  <a class="btn btn-warning disabled" href="" data-toggle="tooltip" data-placement="top" title="Eliminar Vehículo"><i class="bi-trash3-fill"></i></a>
+                  <a class="btn btn-warning" href="{% url 'delete_car' car.id %}" data-toggle="tooltip" data-placement="top" title="Eliminar Vehículo"><i class="bi-trash3-fill"></i></a>
                 </td>
               </tr>
             {% endfor %}

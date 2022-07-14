@@ -38,7 +38,7 @@
                 <td>{{ contact.relationship }}</td>
                 <td>
                   <a class="btn btn-secondary" href="{% url 'edit_emergencycontact' contact.id %}" data-toggle="tooltip" data-placement="top" title="Editar Contacto de Emergencia"><i class="bi-pencil-square"></i></a>
-                  <a class="btn btn-warning disabled" href="" data-toggle="tooltip" data-placement="top" title="Eliminar Contacto de Emergencia"><i class="bi-trash3-fill"></i></a>
+                  <a class="btn btn-warning" href="{% url 'delete_emergencycontact' contact.id %}" data-toggle="tooltip" data-placement="top" title="Eliminar Contacto de Emergencia"><i class="bi-trash3-fill"></i></a>
                 </td>
               </tr>
             {% endfor %}

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'avisos',
     'annoying',
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [
@@ -115,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'es-la'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'America/Santiago'
 
@@ -152,3 +153,10 @@ SESSION_COOKIE_SECURE = False
 
 # Reset Password: ONLY FOR DEVELOPMENT
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# CELERY STUFF
+CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'America/Santiago'

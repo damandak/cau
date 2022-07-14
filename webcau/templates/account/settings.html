@@ -20,7 +20,27 @@
       <div class="form-group" style="width:25rem;">
         <form method="post" enctype='multipart/form-data'>
           {% csrf_token %}
-          {{ form.as_p }}
+          {{ form.errors }}
+          {% for field in form %}
+            {% if field.type == "hidden" %}
+              {{ field }}
+            {% else %}
+              <div class="form-group mt-3 mb-3">
+                {{ field.field.errors}}
+                {% if field.field.help_text %}
+                  <div class="col">
+                    {{ field.label_tag}}{% if field.field.required %}<span class="text-danger">*</span> {% endif %} 
+                  </div>
+                  <div class="col">
+                    {{ field }}
+                  </div>
+                {% else %}
+                  {{ field.label_tag}}{% if field.field.required %}<span class="text-danger">*</span> {% endif %} 
+                  {{ field }}
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
           <button type="submit" class="btn btn-primary mb-3">Guardar</button>
         </form>
       </div>

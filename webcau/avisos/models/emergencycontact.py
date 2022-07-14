@@ -1,13 +1,15 @@
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from .base import *
+from phonenumber_field.modelfields import PhoneNumberField
 
-class EmergencyContact(BaseModel):
+
+class EmergencyContact(SoftDeletionModel):
     member = models.ForeignKey('avisos.Member', on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, null=True, blank=True)
-    phone_number = models.CharField(max_length=20)
-    email = models.EmailField(max_length=254)
-    main_contact = models.BooleanField(default=False)
+    name = models.CharField(max_length=100)
+    phone_number = PhoneNumberField(null=True, blank=True)
+    email = models.EmailField(max_length=254, null=True, blank=True)
+    main_contact = models.BooleanField(default=True)
     relationship = models.CharField(max_length=100, null=True, blank=True)
 
     class Meta:

@@ -17,61 +17,108 @@
     </div>
     <a class="btn btn-primary" href="{% url 'avisos:new_shortnotice' %}">Nuevo Aviso Rápido</a>
     <a class="btn btn-primary disabled" href="{% url 'index' %}">Nuevo Aviso Normal</a>
-    <div class="row justify-content-md-center pt-3 pb-3 mt-3 mb-3 bg-light rounded" style="overflow-x: auto;">
-      {% if avisos %}
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Lugar</th>
-              <th scope="col">Categoría</th>
-              <th scope="col">Ruta(s)</th>
-              <th scope="col">Cordada</th>
-              <th scope="col">Inicio</th>
-              <th scope="col">Fecha Máxima</th>
-              <th scope="col">Contacto CAU</th>
-              <th scope="col">Estado</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for aviso in avisos %}
-              <tr>
-                <td class="table_link"><a class="" href="{% url 'avisos:detail_notice' aviso.id %}">{{ aviso.shortnotice.location }}</a></td>
-                <td>{{ aviso.category }}</td>
-                <td>{{ aviso.shortnotice.route }}</td>
-                <td>
+    <div class="row justify-content-md-center pt-3 pb-3 mt-3 mb-3 rounded">
+      {% if avisos_page.has_other_pages %}
+        <!-- PAGINACIÓN 1 -->
+        <div class="btn-group mb-3  " style="max-width: 25rem;display:block;" role="group" aria-label="Item pagination">
+          {% if avisos_page.has_previous %}
+            <a href="?page={{ avisos_page.previous_page_number }}" class="btn btn-outline-primary">&laquo;</a>
+          {% endif %}
+
+          {% for page_number in avisos_page.paginator.page_range %}
+            {% if avisos_page.number == page_number %}
+              <button class="btn btn-outline-primary active">
+                <span>{{ page_number }} <span class="sr-only">(current)</span></span>
+              </button>
+            {% else %}
+              <a href="?page={{ page_number }}" class="btn btn-outline-primary">
+                {{ page_number }}
+              </a>
+            {% endif %}
+          {% endfor %}
+
+          {% if avisos_page.has_next %}
+            <a href="?page={{ avisos_page.next_page_number }}" class="btn btn-outline-primary">&raquo;</a>
+          {% endif %}
+        </div>
+        <!-- FIN PAGINACIÓN 1 -->
+      {% endif %}
+      {% if avisos_page %}
+        <div class="row justify-content-md-center">
+          <!-- LISTA DE AVISOS -->
+          {% for aviso in avisos_page %}
+            <div class="card text-center p-0 mb-2 aviso-card" style="width: 20rem; margin-right: 5px; margin-left: 5px;">
+              <div class="card-header">
+                {{ aviso.get_status_display }}
+              </div>
+              <div class="card-body ">
+                <a href="{% url 'avisos:detail_notice' aviso.id %}" style="text-decoration: none"><h5 class="card-title">{{ aviso.category }}: {{ aviso.shortnotice.location }} - {{ aviso.shortnotice.route }}</h5> </a>
+                <p class="card-text mb-1">
                   {% for participant in aviso.participants.all %}
-                    {{ participant }} <br>
+                    {{ participant }} -
                   {% endfor %}
-                </td>
-                <td>{{ aviso.start_date|date:'d-m-y, H:i' }}</td>
-                <td>{{ aviso.max_end_date|date:'d-m-y, H:i' }}</td>
-                <td>{{ aviso.cau_contact }}</td>
-                <td>{{ aviso.get_status_display }}</td>
-                <td style="width: 200px;"> 
-                  {% if user.member in aviso.allowed_to_edit %}
-                    {% if aviso.status == 0 %}
-                      <a class="btn btn-primary" href="{% url 'avisos:send_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Publicar Aviso"><i class="bi-send-check-fill"></i></a>
-                    {% endif %}
-                    {% if aviso.status == 2 or aviso.status == 3 %}
-                      <a class="btn btn-success" href="{% url 'avisos:arrive_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Avisar Llegada"><i class="bi bi-house-fill"></i></a>
-                    {% endif %}
-                    <a class="btn btn-secondary" href="{% url 'avisos:edit_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Editar Aviso"><i class="bi-pencil-square"></i></a>
-                    <a class="btn btn-warning disabled" href="" data-toggle="tooltip" data-placement="top" title="Eliminar Aviso"><i class="bi-trash3-fill"></i></a>
+                  {% for friend in aviso.friends.all %}
+                    {{ friend }} -
+                  {% endfor %}
+                </p>
+                <h6>{{ aviso.start_date|date:'d-M-y, H:i' }} - {{ aviso.max_end_date|date:'d-M-y, H:i' }}</h6>
+                {% if user.member in aviso.allowed_to_edit %}
+                  {% if aviso.status == 0 %}
+                    <a class="btn btn-primary btn-notice" href="{% url 'avisos:send_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Publicar Aviso">
+                      <i class="bi-send-check-fill"></i>
+                    </a>
                   {% endif %}
-                  <a class="btn btn-info disabled" href="" data-toggle="tooltip" data-placement="top" title="Descargar Aviso"><i class="bi-download"></i></a>   
-                </td>
-              </tr>
+                  {% if aviso.status == 2 or aviso.status == 3 %}
+                    <a class="btn btn-success btn-notice" href="{% url 'avisos:arrive_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Avisar Llegada">
+                      <i class="bi bi-house-fill"></i>
+                    </a>
+                  {% endif %}
+                  <a class="btn btn-secondary btn-notice" href="{% url 'avisos:edit_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Editar Aviso">
+                    <i class="bi-pencil-square"></i>
+                  </a>
+                  <a class="btn btn-warning btn-notice" href="{% url 'avisos:delete_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Eliminar Aviso">
+                    <i class="bi-trash3-fill"></i>
+                  </a>
+                {% endif %}
+                <a class="btn btn-info btn-notice" href="{% url 'avisos:pdf_notice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Descargar Aviso">
+                  <i class="bi-download"></i>
+                </a>
+              </div>
+            </div>
+          {% endfor %}
+          <!-- FIN LISTA DE AVISOS -->
+        </div>
+        {% if avisos_page.has_other_pages %}
+          <!-- PAGINACIÓN 2 -->
+          <div class="btn-group" style="max-width: 25rem;display:block;" role="group" aria-label="Item pagination">
+            {% if avisos_page.has_previous %}
+              <a href="?page={{ avisos_page.previous_page_number }}" class="btn btn-outline-primary">&laquo;</a>
+            {% endif %}
+
+            {% for page_number in avisos_page.paginator.page_range %}
+              {% if avisos_page.number == page_number %}
+                <button class="btn btn-outline-primary active">
+                  <span>{{ page_number }} <span class="sr-only">(current)</span></span>
+                </button>
+              {% else %}
+                <a href="?page={{ page_number }}" class="btn btn-outline-primary">
+                  {{ page_number }}
+                </a>
+              {% endif %}
             {% endfor %}
-          </tbody>
-        </table>
+
+            {% if avisos_page.has_next %}
+                <a href="?page={{ avisos_page.next_page_number }}" class="btn btn-outline-primary">&raquo;</a>
+            {% endif %}
+          </div>
+          <!-- FIN PAGINACIÓN 2 -->
+        {% endif %}
       {% else %}
         <div class="alert alert-info" role="alert">
           <h4 class="alert-heading">No hay avisos registrados</h4>
           <p>Puedes agregar uno haciendo click en el botón "Nuevo Aviso Rápido" o "Nuevo Aviso Normal" </p>
         </div>
       {% endif %}
-    </div>
   </div>
 
   <script>

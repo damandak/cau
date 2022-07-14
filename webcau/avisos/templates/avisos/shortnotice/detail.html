@@ -2,6 +2,15 @@
 {% load static %}
 
 {% block content %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+        <strong {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
   <div class="container justify-content-md-center text-dark">
     <div class="row mt-4">  
       <h4 class="mt-1 mb-2">
@@ -17,9 +26,10 @@
         {% endif %}
         <a class="btn btn-secondary" href="{% url 'avisos:edit_shortnotice' aviso.id %}"><i class="bi-pencil-square"></i> Editar</a>
         {% if aviso.status == 0 %}
-          <a class="btn btn-danger" href=""><i class="bi-trash"></i> Eliminar</a>
+          <a class="btn btn-danger" href="{% url 'avisos:delete_shortnotice' aviso.id %}"><i class="bi-trash"></i> Eliminar</a>
         {% endif %}
       {% endif %}
+      <a class="btn btn-info" href="{% url 'avisos:pdf_notice' aviso.id %}"><i class="bi-download"></i> PDF</a>    
     </div>
   </div>
 
@@ -27,7 +37,7 @@
     <div style="width:25rem;">
       
       <h6>Fecha Máxima de Llegada: </h6><h5>{{ aviso.max_end_date|date:"H:i - d/m/Y" }}</h5>
-      {% if aviso.time_left_for_arrival <= 0 %}
+      {% if aviso.time_left_for_arrival <= 0 and aviso.status < 4 %}
         <p><b>Llegada Atrasada</b></p>
       {% endif %}
       <h4 class="mb-3">
@@ -76,8 +86,11 @@
             <td>
               {% if aviso.cars %}
                 {% for car in aviso.cars.all %}
-                  {{ car.name }}
+                  {{ car.alias }} |
                 {% endfor %}
+              {% endif %}
+              {% if aviso.other_transportation %}
+                {{ aviso.other_transportation }}
               {% endif %}
             </td>
           </tr>
@@ -113,6 +126,16 @@
               <td>{{ member.main_emergencycontact.relationship }}</td>
             </tr>
           {% endfor %}
+          {% for friend in aviso.friends.all %}
+            <tr>
+              <td>{{ friend }}</td>
+              <td>{{ friend.phone_number }}</td>
+              <td>{{ friend.emergencycontact_name }}</td>
+              <td>{{ friend.emergencycontact_phone }}</td>
+              <td>{{ friend.emergencycontact_email }}</td>
+              <td>{{ friend.emergencycontact_relationship }}</td>
+            </tr>
+          {% endfor %}
         </tbody>
       </table>
 
@@ -140,7 +163,7 @@
               <td>{{ car.brand }}</td>
               <td>{{ car.model }}</td>
               <td>{{ car.color }}</td>
-              <td></td>
+              <td>{{ aviso.parking_location }}</td>
             </tr>
           {% endfor %}
         </tbody>
@@ -170,6 +193,14 @@
                 <td>{{ member.medicalrecord.risks }}</td>
               </tr>
             {% endif %}
+          {% endfor %}
+          {% for friend in aviso.friends.all %}
+            <tr>
+              <td>{{ friend }}</td>
+              <td>{{ friend.sicknesses }}</td>
+              <td>{{ friend.medications }}</td>
+              <td>{{ friend.risks }}</td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>

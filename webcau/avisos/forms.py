@@ -2,7 +2,8 @@ from django import forms
 from dal import autocomplete
 from django.core.mail import send_mail
 
-from .models import Member, MedicalRecord, Car, EmergencyContact, ShortNotice
+from .models import Member, MedicalRecord, Car, EmergencyContact, ShortNotice, Friend, NoticeCategory
+from phonenumber_field.widgets import PhoneNumberPrefixWidget
 
 class MemberForm(forms.ModelForm):
     class Meta:
@@ -15,9 +16,21 @@ class MemberForm(forms.ModelForm):
             'first_surname': forms.TextInput(attrs={'class': 'form-control'}),
             'second_surname': forms.TextInput(attrs={'class': 'form-control'}),
             'rut': forms.TextInput(attrs={'class': 'form-control'}),
-            'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'enrollment_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'birth_date': forms.DateInput(
+                format= '%Y-%m-%d',
+                attrs={
+                    'type': 'date', 
+                    'class': 'form-control',
+                    }
+                ),
+            'enrollment_date': forms.DateInput(
+                format= '%Y-%m-%d',
+                attrs={
+                  'type': 'date',
+                  'class': 'form-control'
+                  }
+                ),
+            'phone_number': PhoneNumberPrefixWidget(initial='CL', attrs={'class': 'form-control'}),
             'use_middlename': forms.CheckboxInput(attrs={'class': 'form-check-inline'}),
             'use_second_surname': forms.CheckboxInput(attrs={'class': 'form-check-inline'}),
             'profile_image': forms.FileInput(
@@ -38,6 +51,15 @@ class MemberForm(forms.ModelForm):
             'use_second_surname': 'Usar Apellido Materno',
             'profile_image': 'Foto de Perfil (max 2MB)',
         }
+        required = {
+          'name',
+          'first_surname',
+          'phone_number',
+        }
+        help_texts = {
+          'use_middlename': 'Si el segundo nombre es requerido, marque esta opción',
+          'use_second_surname': 'Si el apellido materno es requerido, marque esta opción',
+        }
         exclude = ['user']
         action = forms.CharField(max_length=60, widget=forms.HiddenInput())
 
@@ -57,6 +79,84 @@ class MedicalForm(forms.ModelForm):
             'sicknesses': 'Enfermedades',
             'medications': 'Medicamentos',
             'risks': 'Riesgos',
+        }
+        exclude = ['member']
+        action = forms.CharField(max_length=60, widget=forms.HiddenInput())
+
+class FriendForm(forms.ModelForm):
+    class Meta:
+        model = Friend
+        fields = ('member', 'name', 'middlename', 'first_surname', 'second_surname', 'rut', 'birth_date', 'phone_number', 'email', 'emergencycontact_name', 'emergencycontact_phone', 'emergencycontact_email', 'emergencycontact_relationship', 'sicknesses', 'medications', 'risks')
+        widgets = {
+            'member': forms.HiddenInput(),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'middlename': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_surname': forms.TextInput(attrs={'class': 'form-control'}),
+            'second_surname': forms.TextInput(attrs={'class': 'form-control'}),
+            'rut': forms.TextInput(attrs={'class': 'form-control'}),
+            'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'phone_number': PhoneNumberPrefixWidget(initial='CL', attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'emergencycontact_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'emergencycontact_phone': PhoneNumberPrefixWidget(initial='CL', attrs={'class': 'form-control'}),
+            'emergencycontact_email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'emergencycontact_relationship': forms.TextInput(attrs={'class': 'form-control'}),
+            'sicknesses': forms.TextInput(attrs={'class': 'form-control'}),
+            'medications': forms.TextInput(attrs={'class': 'form-control'}),
+            'risks': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'name': 'Nombre',
+            'middlename': 'Segundo Nombre',
+            'first_surname': 'Apellido Paterno',
+            'second_surname': 'Apellido Materno',
+            'rut': 'RUT',
+            'birth_date': 'Fecha de Nacimiento',
+            'phone_number': 'Número de Teléfono',
+            'email': 'Correo Electrónico',
+            'emergencycontact_name': 'Nombre de Contacto de Emergencia',
+            'emergencycontact_phone': 'Teléfono de Contacto de Emergencia*',
+            'emergencycontact_email': 'Correo Electrónico de Contacto de Emergencia',
+            'emergencycontact_relationship': 'Parentesco de Contacto de Emergencia',
+            'sicknesses': 'Enfermedades',
+            'medications': 'Medicamentos',
+            'risks': 'Riesgos de salud',
+        }
+        required = {
+          'name',
+          'first_surname',
+          'phone_number',
+          'emergencycontact_name',
+          'emergencycontact_phone',
+        }
+        exclude = ['member']
+        action = forms.CharField(max_length=60, widget=forms.HiddenInput())
+
+class EmergencyContactForm(forms.ModelForm):
+    class Meta:
+        model = EmergencyContact
+        fields = ('name', 'phone_number', 'email', 'relationship', 'main_contact')
+        widgets = {
+            'member': forms.HiddenInput(),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone_number': PhoneNumberPrefixWidget(initial='CL', attrs={'class': 'form-control'}),
+            'email': forms.TextInput(attrs={'class': 'form-control'}),
+            'main_contact': forms.CheckboxInput(attrs={'class': 'form-check-inline big-checkbox'}),
+            'relationship': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'name': 'Nombre Completo',
+            'phone_number': 'Número de Teléfono',
+            'email': 'Correo Electrónico',
+            'main_contact': '¿Es tu contacto predeterminado?',
+            'relationship': 'Relación / Grado de Parentesco (Papá, Mamá, Tío, Tía, etc.)',
+        }
+        help_texts = {
+          'main_contact': 'Si es tu contacto predeterminado, marca esta opción',
+        }
+        required = {
+          'name',
+          'phone_number',
         }
         exclude = ['member']
         action = forms.CharField(max_length=60, widget=forms.HiddenInput())
@@ -84,82 +184,114 @@ class CarForm(forms.ModelForm):
         }
         exclude = ['member']
         action = forms.CharField(max_length=60, widget=forms.HiddenInput())
-
-class EmergencyContactForm(forms.ModelForm):
-    class Meta:
-        model = EmergencyContact
-        fields = ('name', 'phone_number', 'email', 'main_contact', 'relationship')
-        widgets = {
-            'member': forms.HiddenInput(),
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.TextInput(attrs={'class': 'form-control'}),
-            'main_contact': forms.CheckboxInput(attrs={'class': 'form-check-inline'}),
-            'relationship': forms.TextInput(attrs={'class': 'form-control'}),
-        }
-        labels = {
-            'name': 'Nombre Completo',
-            'phone_number': 'Número de Teléfono',
-            'email': 'Correo Electrónico',
-            'main_contact': '¿Es tu contacto predeterminado?',
-            'relationship': 'Relación / Grado de Parentesco (Papá, Mamá, Tío, Tía, etc.)',
-        }
-        exclude = ['member']
-        action = forms.CharField(max_length=60, widget=forms.HiddenInput())
-
 class ShortNoticeForm(forms.ModelForm):
+    category = forms.ModelChoiceField(
+      queryset=NoticeCategory.objects.order_by('priority'), 
+      widget=forms.Select(attrs={'class': 'form-control'}), 
+      label='Categoría', 
+      required=True,
+      help_text='Categoría de la actividad a realizar',
+      )
+
+    def __init__(self, *args, **kwargs):
+      super().__init__(*args, **kwargs)
+
+      for field in self.Meta.required:
+        self.fields[field].required = True
+
     class Meta:
         model = ShortNotice
-        fields = ('category', 'location', 'route', 'start_date', 'max_end_date', 'participants', 'cau_contact', 'cars', 'description')
+        fields = ('category', 'location', 'route', 'start_date', 'max_end_date', 'participants', 'friends', 'cau_contact', 'cars', 'parking_location', 'other_transportation', 'description')
         widgets = {
-            'location': forms.TextInput(attrs={'class': 'form-control'}),
-            'route': forms.TextInput(attrs={'class': 'form-control'}),
-            'category': forms.Select(attrs={'class': 'form-control form-select'}),
+            'location': forms.TextInput(
+              attrs={
+                'class': 'form-control',
+                'required': True,
+                },
+              ),
+            'route': forms.TextInput(
+              attrs={'class': 'form-control'},
+              ),
             'start_date': forms.DateTimeInput(
                 format= '%Y-%m-%dT%H:%M',
                 attrs={
                     'type': 'datetime-local', 
                     'class': 'form-control',
-                    }
+                    'required': True,
+                    },
                 ),
             'max_end_date': forms.DateTimeInput(
                 format= '%Y-%m-%dT%H:%M',  
                 attrs={
                     'type': 'datetime-local',
                     'class': 'form-control',
-                    'help_text': "<span class='tooltip'>?<span class='tooltiptext'>Recuerda que debes tener señal para notificar tu llegada antes de esta hora. Si no hay notificación al superar el plazo, se activarán las alertas del club.</span></span>",
-                    }
+                    },
                 ),
             'cau_contact': autocomplete.ModelSelect2(
                 url='avisos:member_autocomplete',
                 attrs={
                     'data-placeholder': 'Buscar'
-                    }
+                    },
                 ),
             'participants': autocomplete.ModelSelect2Multiple(
                 url='avisos:member_autocomplete',
                 attrs={
                     'data-placeholder': 'Buscar'
-                    }
+                    },
                 ),
             'cars': autocomplete.ModelSelect2Multiple(
                 url='avisos:cars_autocomplete',
                 forward=['participants'],
                 attrs={
                     'data-placeholder': 'Buscar'
-                    }
+                    },
+                ),
+            'parking_location': forms.TextInput(attrs={'class': 'form-control'}),
+            'other_transportation': forms.TextInput(attrs={'class': 'form-control'}),
+            'friends': autocomplete.ModelSelect2Multiple(
+                url='avisos:friends_autocomplete',
+                forward=['participants'],
+                attrs={
+                    'data-placeholder': 'Buscar'
+                    },
                 ),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
         }
+        required = {
+          'category',
+          'location',
+          'route',
+          'start_date',
+          'max_end_date',
+          'cau_contact',
+          'participants',
+        }
+        help_texts = {
+          'location': "Lugar donde se realizará la actividad",
+          'route': "Ruta o equivalente donde se realizará la actividad",
+          'start_date': "Fecha y hora de inicio de la actividad",
+          'max_end_date': "Fecha y hora de fin de la actividad. Recuerda que debes tener señal para notificar tu llegada antes de esta hora. Si no hay notificación al superar el plazo, se activarán las alertas del club.",
+          'cau_contact': "Socio fuera de la cordada responsable de la actividad desde un lugar con señal para poder activar protocolos de emergencia en caso de ser necesario.",
+          'participants': "Socios que participarán en la actividad",
+          'cars': "Vehículos que se usarán para dirigirse a la actividad. Debes agregarlos previamente en la cuenta de alguien que participe en la salida, en 'amigos'.",
+          'parking_location': "Lugar donde se guardarán los vehículos que se usen para la actividad.",
+          'other_transportation': "Detallar cualquier otra forma de transporte que se usará para la actividad (autos no agregados, traslado por un familiar, transporte público, etc) ",
+          'friends': "Personas externas al CAU que participarán en la actividad. Debes agregarlas previamente en la cuenta de alguien que participe en la salida, en 'amigos'.",
+          'description': "Descripción de la actividad. Cualquier información que complemente la información ya ingresada.",
+        }
+      
         labels = {
             'location': 'Lugar',
-            'category': 'Categoría*',
+            'category': 'Categoría',
             'route': 'Ruta(s)',
-            'start_date': 'Fecha de Inicio*',
-            'max_end_date': 'Plazo Máximo de Llegada*: Recuerda que debes tener señal para notificar tu llegada antes de esta hora. Si no hay notificación al superar el plazo, se activarán las alertas del club.',
+            'start_date': 'Fecha de Inicio',
+            'max_end_date': 'Plazo Máximo de Llegada',
             'participants': 'Miembros de la cordada',
+            'friends': 'Amigos externos al CAU',
             'cau_contact': 'Contacto CAU',
             'cars': 'Vehículos',
+            'parking_location': 'Lugar de estacionamiento',
+            'other_transportation': 'Otros medios de transporte',
             'description': 'Comentarios',
         }
         action = forms.CharField(max_length=60, widget=forms.HiddenInput())
@@ -204,7 +336,7 @@ class SendNoticeForm(forms.ModelForm):
         list_of_mails = self.cleaned_data['sendto_otheremails'].strip('[]').split(',')
         for email in list_of_mails:
             email = email.replace('"', '')
-            instance.include_email(email)
+            instance.include_email(email, False)
 
         mail_content = self.cleaned_data['mail_body']
 

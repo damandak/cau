@@ -1,3 +1,13 @@
+{% if not user.member.main_emergencycontact %}
+  <div class="alert alert-danger" style="margin-bottom: 0px">
+      No has definido a un contacto de emergencia como <strong><a href="{% url 'emergencycontacts_data' %}">contacto predeterminado.</a></strong>
+  </div>
+{% endif %}
+{% if user.member.medicalrecord.pending %}
+  <div class="alert alert-danger" style="margin-bottom: 0px">
+      No has completado tu <strong><a href="{% url 'medical_data' %}"> información médica. </a></strong>
+  </div>
+{% endif %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
       <a class="navbar-brand" href="{% url 'index' %}">webCAU</a>
@@ -15,8 +25,7 @@
               <li><a class="dropdown-item disabled" href="#">Aviso Normal</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'avisos:myavisos' %}">Mis Avisos</a></li>
-              <li><a class="dropdown-item disabled" href="#">Avisos Activos</a></li>
-              <li><a class="dropdown-item" href="{% url 'avisos:avisos' %}">Todos los Avisos</a></li>
+              <li><a class="dropdown-item" href="{% url 'avisos:avisos' %}">Avisos de Socios</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown">
@@ -31,7 +40,7 @@
               <li><a class="dropdown-item" href="https://www.cau.cl/?page_id=4648">InReach</a></li>
               <li><a class="dropdown-item" href="https://drive.google.com/file/d/123zxL-kwaBIJ4Mvs9v7hWPLNGl0JtHwo/view?usp=sharing">Manual de Socios</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Chiste semanal de Pelao</a></li>
+              <li><a class="dropdown-item" href="#">Grupos de Whatsapp</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown">
@@ -60,6 +69,7 @@
                 <li><a class="dropdown-item" href="{% url 'emergencycontacts_data' %}"></i>Contactos de Emergencia</a></li>
                 <li><a class="dropdown-item" href="{% url 'medical_data' %}"></i>Información Médica</a></li>
                 <li><a class="dropdown-item" href="{% url 'cars_data' %}"></i>Vehículo(s)</a></li>
+                <li><a class="dropdown-item" href="{% url 'friends_data' %}"></i>Amigos Externos</a></li>
                 <li><a class="dropdown-item" href="{% url 'logout'%}?next={{request.path}}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
               </ul>
             </li>

@@ -4,9 +4,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .base import *
 from .emergencycontact import EmergencyContact
+from phonenumber_field.modelfields import PhoneNumberField
+
 
 #   Member model. Pending: member status, image, signature, etc.
-class Member(BaseModel):
+class Member(SoftDeletionModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     middlename = models.CharField(max_length=100, blank=True)
@@ -15,7 +17,7 @@ class Member(BaseModel):
     rut = models.CharField(max_length=20)
     birth_date = models.DateField(null=True, blank=True)
     enrollment_date = models.DateField(null=True, blank=True)
-    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    phone_number = PhoneNumberField(null=True, blank=True)
     use_middlename = models.BooleanField(default=False)
     use_second_surname = models.BooleanField(default=False)
 
@@ -49,7 +51,7 @@ def create_user_member(sender, instance, created, **kwargs):
 def save_user_member(sender, instance, **kwargs):
     instance.member.save()
 
-class ClubBoard(BaseModel):
+class ClubBoard(SoftDeletionModel):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     members = models.ManyToManyField(Member, blank=True, through='ClubBoardMember')
@@ -57,7 +59,7 @@ class ClubBoard(BaseModel):
     def __str__(self):
         return self.name
 
-class ClubBoardMember(BaseModel):
+class ClubBoardMember(SoftDeletionModel):
     member = models.ForeignKey(Member, on_delete=models.CASCADE)
     clubboard = models.ForeignKey(ClubBoard, on_delete=models.CASCADE)
     position = models.CharField(max_length=100)
@@ -66,7 +68,7 @@ class ClubBoardMember(BaseModel):
     def __str__(self):
         return self.position + " en " + self.clubboard.name
 
-class Committee(BaseModel):
+class Committee(SoftDeletionModel):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     members = models.ManyToManyField(Member, blank=True, through='CommitteeMember')
@@ -74,7 +76,7 @@ class Committee(BaseModel):
     def __str__(self):
         return self.name
 
-class CommitteeMember(BaseModel):
+class CommitteeMember(SoftDeletionModel):
     member = models.ForeignKey(Member, on_delete=models.CASCADE)
     committee = models.ForeignKey(Committee, on_delete=models.CASCADE)
     position = models.CharField(max_length=100)
@@ -82,7 +84,36 @@ class CommitteeMember(BaseModel):
     def __str__(self):
         return self.position + " en " + self.committee.name
 
-class EmailRecipient(BaseModel):
+class EmailRecipient(SoftDeletionModel):
     email = models.EmailField(max_length=254)
     def __str__(self):
         return str(self.email)
+
+class Friend(SoftDeletionModel):
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, null=True, blank=True)
+    name = models.CharField(max_length=100)
+    middlename = models.CharField(max_length=100, blank=True)
+    first_surname = models.CharField(max_length=100)
+    second_surname = models.CharField(max_length=100, blank=True)
+    rut = models.CharField(max_length=20, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+    phone_number = PhoneNumberField(null=True, blank=True)
+    email = models.EmailField(max_length=254, blank=True)
+    
+    emergencycontact_name = models.CharField(max_length=100)
+    emergencycontact_phone = PhoneNumberField(null=True, blank=True)
+    emergencycontact_email = models.EmailField(max_length=254, blank=True)
+    emergencycontact_relationship = models.CharField(max_length=100, blank=True)
+
+    sicknesses = models.CharField(max_length=100, blank=True)
+    medications = models.CharField(max_length=100, blank=True)
+    risks = models.CharField(max_length=100, blank=True)
+
+    def delete(self):
+      self.member = None
+      self.save()
+
+    def __str__(self):
+        return self.name + " " + self.middlename + " " + self.first_surname + " " + self.second_surname
+
+
