@@ -20,20 +20,20 @@
     <div class="btn-group btn-group-lg mb-3" role="group" style="width:25rem;">
       {% if user.member in aviso.allowed_to_edit %}  
         {% if aviso.status == 0 %}
-          <a class="btn btn-primary" href="{% url 'avisos:send_shortnotice' aviso.id %}"><i class="bi-send-check-fill"></i> Publicar</a>
+          <a class="btn btn-info" href="{% url 'avisos:send_shortnotice' aviso.id %}"><i class="bi-send-check-fill"></i> Publicar</a>
         {% elif aviso.status == 1 or aviso.status == 2 or aviso.status == 3 %}
-          <a class="btn btn-success" href="{% url 'avisos:arrive_shortnotice' aviso.id %}"><i class="bi-geo-alt-fill"></i> Avisar Llegada</a>
+          <a class="btn btn-info" href="{% url 'avisos:arrive_shortnotice' aviso.id %}"><i class="bi-geo-alt-fill"></i> Avisar Llegada</a>
         {% endif %}
-        <a class="btn btn-secondary" href="{% url 'avisos:edit_shortnotice' aviso.id %}"><i class="bi-pencil-square"></i> Editar</a>
+        <a class="btn btn-light" href="{% url 'avisos:edit_shortnotice' aviso.id %}"><i class="bi-pencil-square"></i> Editar</a>
         {% if aviso.status == 0 %}
-          <a class="btn btn-danger" href="{% url 'avisos:delete_shortnotice' aviso.id %}"><i class="bi-trash"></i> Eliminar</a>
+          <a class="btn btn-light" href="{% url 'avisos:delete_shortnotice' aviso.id %}"><i class="bi-trash"></i> Eliminar</a>
         {% endif %}
       {% endif %}
-      <a class="btn btn-info" href="{% url 'avisos:pdf_notice' aviso.id %}"><i class="bi-download"></i> PDF</a>    
+      <a class="btn btn-light" href="{% url 'avisos:pdf_notice' aviso.id %}"><i class="bi-download"></i> PDF</a>    
     </div>
   </div>
 
-  <div class="row justify-content-md-center p-3  bg-light rounded">
+  <div class="row justify-content-md-center p-3 rounded">
     <div style="width:25rem;">
       
       <h6>Fecha Máxima de Llegada: </h6><h5>{{ aviso.max_end_date|date:"H:i - d/m/Y" }}</h5>
@@ -42,13 +42,13 @@
       {% endif %}
       <h4 class="mb-3">
         {% if aviso.status == 0 %}
-            <span class="badge bg-secondary">
+            <span class="badge bg-light">
           {% elif aviso.status == 1 %}
             <span class="badge bg-primary">
           {% elif aviso.status == 2 %}
-            <span class="badge bg-info">
+            <span class="badge bg-secondary">
           {% elif aviso.status == 3 %}
-            <span class="badge bg-warning">
+            <span class="badge bg-info">
           {% elif aviso.status == 4 %}
             <span class="badge bg-success">
           {% elif aviso.status == 5 %}

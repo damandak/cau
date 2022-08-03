@@ -15,8 +15,8 @@
     <div class="row">
       <h4 class="mt-4 mb-3">{{ title }}</h4> 
     </div>
-    <a class="btn btn-primary" href="{% url 'avisos:new_shortnotice' %}">Nuevo Aviso Rápido</a>
-    <a class="btn btn-primary disabled" href="{% url 'index' %}">Nuevo Aviso Normal</a>
+    <a class="btn btn-warning" href="{% url 'avisos:new_shortnotice' %}">Nuevo Aviso Rápido</a>
+    <a class="btn btn-warning disabled" href="{% url 'index' %}">Nuevo Aviso Normal</a>
     <div class="row justify-content-md-center pt-3 pb-3 mt-3 mb-3 rounded">
       {% if avisos_page.has_other_pages %}
         <!-- PAGINACIÓN 1 -->
@@ -47,11 +47,15 @@
         <div class="row justify-content-md-center">
           <!-- LISTA DE AVISOS -->
           {% for aviso in avisos_page %}
-            <div class="card text-center p-0 mb-2 aviso-card" style="width: 20rem; margin-right: 5px; margin-left: 5px;">
+            {% if aviso.status == 3 %}
+              <div class="card text-center text-bg-info p-0 mb-2 aviso-card" style="width: 20rem; margin-right: 5px; margin-left: 5px;">
+            {% else %}
+              <div class="card text-center p-0 mb-2 aviso-card" style="width: 20rem; margin-right: 5px; margin-left: 5px;">
+            {% endif %}
               <div class="card-header">
                 {{ aviso.get_status_display }}
               </div>
-              <div class="card-body ">
+              <div class="card-body" style="background: white; color: #1c1c1c;">
                 <a href="{% url 'avisos:detail_notice' aviso.id %}" style="text-decoration: none"><h5 class="card-title">{{ aviso.category }}: {{ aviso.shortnotice.location }} - {{ aviso.shortnotice.route }}</h5> </a>
                 <p class="card-text mb-1">
                   {% for participant in aviso.participants.all %}
@@ -64,23 +68,23 @@
                 <h6>{{ aviso.start_date|date:'d-M-y, H:i' }} - {{ aviso.max_end_date|date:'d-M-y, H:i' }}</h6>
                 {% if user.member in aviso.allowed_to_edit %}
                   {% if aviso.status == 0 %}
-                    <a class="btn btn-primary btn-notice" href="{% url 'avisos:send_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Publicar Aviso">
+                    <a class="btn btn-info btn-notice" href="{% url 'avisos:send_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Publicar Aviso">
                       <i class="bi-send-check-fill"></i>
                     </a>
                   {% endif %}
                   {% if aviso.status == 2 or aviso.status == 3 %}
-                    <a class="btn btn-success btn-notice" href="{% url 'avisos:arrive_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Avisar Llegada">
+                    <a class="btn btn-info btn-notice" href="{% url 'avisos:arrive_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Avisar Llegada">
                       <i class="bi bi-house-fill"></i>
                     </a>
                   {% endif %}
-                  <a class="btn btn-secondary btn-notice" href="{% url 'avisos:edit_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Editar Aviso">
+                  <a class="btn btn-light btn-notice" href="{% url 'avisos:edit_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Editar Aviso">
                     <i class="bi-pencil-square"></i>
                   </a>
-                  <a class="btn btn-warning btn-notice" href="{% url 'avisos:delete_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Eliminar Aviso">
+                  <a class="btn btn-light btn-notice" href="{% url 'avisos:delete_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Eliminar Aviso">
                     <i class="bi-trash3-fill"></i>
                   </a>
                 {% endif %}
-                <a class="btn btn-info btn-notice" href="{% url 'avisos:pdf_notice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Descargar Aviso">
+                <a class="btn btn-light btn-notice" href="{% url 'avisos:pdf_notice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Descargar Aviso">
                   <i class="bi-download"></i>
                 </a>
               </div>

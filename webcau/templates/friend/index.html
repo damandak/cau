@@ -16,7 +16,7 @@
       <h4 class="mt-4 mb-3">Amigos</h4>
     </div>
     <a class="btn btn-primary" href="{% url 'new_friend' %}">Agregar Amigo</a>
-    <div class="row justify-content-md-center pt-3 pb-3 mt-3 mb-3 bg-light rounded" style="overflow-x: auto;">
+    <div class="row justify-content-md-center pt-3 pb-3 mt-3 mb-3 rounded" style="overflow-x: auto;">
       {% if friends.count > 0 %}
         <table class="table table-striped">
           <thead>
@@ -46,8 +46,8 @@
                 <td>{{ friend.emergencycontact_email }}</td>
                 <td>{{ friend.emergencycontact_relationship }}</td>
                 <td>
-                  <a class="btn btn-secondary" href="{% url 'edit_friend' friend.id %}" data-toggle="tooltip" data-placement="top" title="Editar Amigo"><i class="bi-pencil-square"></i></a>
-                  <a class="btn btn-warning" href="{% url 'delete_friend' friend.id %}" data-toggle="tooltip" data-placement="top" title="Eliminar Amigo"><i class="bi-trash3-fill"></i></a>
+                  <a class="btn btn-light" href="{% url 'edit_friend' friend.id %}" data-toggle="tooltip" data-placement="top" title="Editar Amigo"><i class="bi-pencil-square"></i></a>
+                  <a class="btn btn-light" href="{% url 'delete_friend' friend.id %}" data-toggle="tooltip" data-placement="top" title="Eliminar Amigo"><i class="bi-trash3-fill"></i></a>
                 </td>
               </tr>
             {% endfor %}

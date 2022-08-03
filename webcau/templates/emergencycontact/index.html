@@ -17,7 +17,7 @@
     </div>
     <p>Los contactos de emergencia son las personas a quienes el Contacto CAU deberá contactar en caso de ser necesario.</p>
     <a class="btn btn-primary" href="{% url 'new_emergencycontact' %}">Agregar Contacto de Emergencia</a>
-    <div class="row justify-content-md-center pt-3 pb-3 mt-3 mb-3 bg-light rounded" style="overflow-x: auto;">
+    <div class="row justify-content-md-center pt-3 pb-3 mt-3 mb-3 rounded" style="overflow-x: auto;">
       {% if emergencycontacts.count > 0 %}
         <table class="table table-striped">
           <thead>
@@ -37,8 +37,8 @@
                 <td>{{ contact.email }}</td>
                 <td>{{ contact.relationship }}</td>
                 <td>
-                  <a class="btn btn-secondary" href="{% url 'edit_emergencycontact' contact.id %}" data-toggle="tooltip" data-placement="top" title="Editar Contacto de Emergencia"><i class="bi-pencil-square"></i></a>
-                  <a class="btn btn-warning" href="{% url 'delete_emergencycontact' contact.id %}" data-toggle="tooltip" data-placement="top" title="Eliminar Contacto de Emergencia"><i class="bi-trash3-fill"></i></a>
+                  <a class="btn btn-light" href="{% url 'edit_emergencycontact' contact.id %}" data-toggle="tooltip" data-placement="top" title="Editar Contacto de Emergencia"><i class="bi-pencil-square"></i></a>
+                  <a class="btn btn-light" href="{% url 'delete_emergencycontact' contact.id %}" data-toggle="tooltip" data-placement="top" title="Eliminar Contacto de Emergencia"><i class="bi-trash3-fill"></i></a>
                 </td>
               </tr>
             {% endfor %}

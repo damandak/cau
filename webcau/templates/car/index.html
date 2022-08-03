@@ -16,7 +16,7 @@
       <h4 class="mt-4 mb-3">Vehículos</h4>
     </div>
     <a class="btn btn-primary" href="{% url 'new_car' %}">Agregar Vehículo</a>
-    <div class="row justify-content-md-center pt-3 pb-3 mt-3 mb-3 bg-light rounded" style="overflow-x: auto;">
+    <div class="row justify-content-md-center pt-3 pb-3 mt-3 mb-3 rounded" style="overflow-x: auto;">
       {% if cars.count > 0 %}
         <table class="table table-striped">
           <thead>
@@ -40,8 +40,8 @@
                 <td>{{ car.color }}</td>
                 <td>{{ car.license_plate }}</td>
                 <td>
-                  <a class="btn btn-secondary" href="{% url 'edit_car' car.id %}" data-toggle="tooltip" data-placement="top" title="Editar Vehículo"><i class="bi-pencil-square"></i></a>
-                  <a class="btn btn-warning" href="{% url 'delete_car' car.id %}" data-toggle="tooltip" data-placement="top" title="Eliminar Vehículo"><i class="bi-trash3-fill"></i></a>
+                  <a class="btn btn-light" href="{% url 'edit_car' car.id %}" data-toggle="tooltip" data-placement="top" title="Editar Vehículo"><i class="bi-pencil-square"></i></a>
+                  <a class="btn btn-light" href="{% url 'delete_car' car.id %}" data-toggle="tooltip" data-placement="top" title="Eliminar Vehículo"><i class="bi-trash3-fill"></i></a>
                 </td>
               </tr>
             {% endfor %}

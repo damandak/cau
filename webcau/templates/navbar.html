@@ -1,3 +1,4 @@
+{% load static %}
 {% if not user.member.main_emergencycontact %}
   <div class="alert alert-danger" style="margin-bottom: 0px">
       No has definido a un contacto de emergencia como <strong><a href="{% url 'emergencycontacts_data' %}">contacto predeterminado.</a></strong>
@@ -10,7 +11,9 @@
 {% endif %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'index' %}">webCAU</a>
+      <a class="navbar-brand" href="{% url 'index' %}">
+        <img src="{% static 'images/logo_socioscau.png' %}" alt="Logo" class="navbar-brand" style="width: 100px">
+      </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>

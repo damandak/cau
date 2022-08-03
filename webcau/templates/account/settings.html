@@ -16,7 +16,7 @@
       <h4 class="mt-4 mb-3">{{ user.member }}</h4>
       <img src="{{ user.member.profile_image.url }}" class="img-thumbnail profile_settings_image" alt="...">
     </div>
-    <div class="row justify-content-md-center p-3 m-3 bg-light rounded">
+    <div class="row justify-content-md-center p-3 m-3 rounded">
       <div class="form-group" style="width:25rem;">
         <form method="post" enctype='multipart/form-data'>
           {% csrf_token %}
