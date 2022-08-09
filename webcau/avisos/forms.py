@@ -84,6 +84,11 @@ class MedicalForm(forms.ModelForm):
         action = forms.CharField(max_length=60, widget=forms.HiddenInput())
 
 class FriendForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+      super().__init__(*args, **kwargs)
+
+      for field in self.Meta.required:
+        self.fields[field].required = True
     class Meta:
         model = Friend
         fields = ('member', 'name', 'middlename', 'first_surname', 'second_surname', 'rut', 'birth_date', 'phone_number', 'email', 'emergencycontact_name', 'emergencycontact_phone', 'emergencycontact_email', 'emergencycontact_relationship', 'sicknesses', 'medications', 'risks')
@@ -115,7 +120,7 @@ class FriendForm(forms.ModelForm):
             'phone_number': 'Número de Teléfono',
             'email': 'Correo Electrónico',
             'emergencycontact_name': 'Nombre de Contacto de Emergencia',
-            'emergencycontact_phone': 'Teléfono de Contacto de Emergencia*',
+            'emergencycontact_phone': 'Teléfono de Contacto de Emergencia',
             'emergencycontact_email': 'Correo Electrónico de Contacto de Emergencia',
             'emergencycontact_relationship': 'Parentesco de Contacto de Emergencia',
             'sicknesses': 'Enfermedades',
@@ -192,7 +197,6 @@ class ShortNoticeForm(forms.ModelForm):
       required=True,
       help_text='Categoría de la actividad a realizar',
       )
-
     def __init__(self, *args, **kwargs):
       super().__init__(*args, **kwargs)
 
@@ -233,6 +237,7 @@ class ShortNoticeForm(forms.ModelForm):
                     'data-placeholder': 'Buscar'
                     },
                 ),
+            # Initial value: current member
             'participants': autocomplete.ModelSelect2Multiple(
                 url='avisos:member_autocomplete',
                 attrs={

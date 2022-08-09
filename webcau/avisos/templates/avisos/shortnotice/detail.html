@@ -86,7 +86,7 @@
             <td>
               {% if aviso.cars %}
                 {% for car in aviso.cars.all %}
-                  {{ car.alias }} |
+                  {{ car.brand }} - {{ car.model }}<br>
                 {% endfor %}
               {% endif %}
               {% if aviso.other_transportation %}
@@ -148,7 +148,6 @@
         <thead>
           <tr>
             <th scope="col">Socio</th>
-            <th scope="col">Alias</th>
             <th scope="col">Marca</th>
             <th scope="col">Modelo</th>
             <th scope="col">Color</th>
@@ -159,7 +158,6 @@
           {% for car in aviso.cars.all %}
             <tr>
               <td>{{ car.member }}</td>
-              <td>{{ car.alias }}</td>
               <td>{{ car.brand }}</td>
               <td>{{ car.model }}</td>
               <td>{{ car.color }}</td>

@@ -33,7 +33,7 @@ class UpdateMedicalView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = MedicalRecord
     form_class = MedicalForm
     template_name = 'medical/settings.html'
-    success_url = reverse_lazy('medical_data')
+    success_url = reverse_lazy('index')
     success_message = 'Datos actualizados correctamente'
 
     def get_object(self):
@@ -133,7 +133,7 @@ class CreateFriendView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     form_class = FriendForm
     template_name = 'friend/create.html'
     success_url = reverse_lazy('friends_data')
-    success_message = 'Vehículo creado correctamente'
+    success_message = 'Amigo creado correctamente'
 
     def form_valid(self, form):
         form.instance.member = self.request.user.member

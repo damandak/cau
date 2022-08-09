@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.views import View
 from ..models import Member, Car, EmergencyContact, BaseNotice
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import Q
+
 
 
 class IndexView(LoginRequiredMixin, View):
@@ -18,7 +20,7 @@ class IndexView(LoginRequiredMixin, View):
         return EmergencyContact.objects.filter(member=self.get_object())
     
     def get_active_notices(self):
-        return [notice for notice in BaseNotice.objects.filter(status=2) if self.get_object() in notice.allowed_to_edit()]
+        return [notice for notice in BaseNotice.objects.filter(Q(status=2) | Q(status=3)) if self.get_object() in notice.allowed_to_edit()]
 
 
 class ObjectOwnerAuthMixin(LoginRequiredMixin, UserPassesTestMixin):

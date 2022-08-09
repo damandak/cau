@@ -16,6 +16,9 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Tabl
 from reportlab.lib import colors
 from reportlab.pdfbase.pdfmetrics import stringWidth
 
+def datetime_now_rounder():
+    return tz.now().replace(minute=0, second=0, microsecond=0)
+    
 class NoticeCategory(SoftDeletionModel):
   name = models.CharField(max_length=100)
   priority = models.IntegerField(default=0)
@@ -42,8 +45,8 @@ class BaseNotice(SoftDeletionModel):
     )
     status = models.IntegerField(choices=STATUS_CHOICES, default=DRAFT)
     category = models.ForeignKey(NoticeCategory, on_delete=models.CASCADE)
-    start_date = models.DateTimeField(default=tz.now, blank=True)
-    max_end_date = models.DateTimeField(default=tz.now, blank=True)
+    start_date = models.DateTimeField(default=datetime_now_rounder, blank=True)
+    max_end_date = models.DateTimeField(default=datetime_now_rounder, blank=True)
     participants = models.ManyToManyField(Member, blank=True)
     friends = models.ManyToManyField(Friend, blank=True)
     cars = models.ManyToManyField(Car, blank=True)
@@ -290,7 +293,6 @@ class BaseNotice(SoftDeletionModel):
         table_data = []
         table_data.append([
             Paragraph("Dueño", styles['table_titles']),
-            Paragraph("Alias", styles['table_titles']),
             Paragraph("Marca", styles['table_titles']),
             Paragraph("Modelo", styles['table_titles']),
             Paragraph("Color", styles['table_titles']),
@@ -302,7 +304,6 @@ class BaseNotice(SoftDeletionModel):
             counter += 1
             table_data.append([
                 Paragraph(str(car.member), styles['table_content']),
-                Paragraph(car.alias, styles['table_content']),
                 Paragraph(car.brand, styles['table_content']),
                 Paragraph(car.model, styles['table_content']),
                 Paragraph(car.color, styles['table_content']),
@@ -310,7 +311,7 @@ class BaseNotice(SoftDeletionModel):
                 Paragraph(self.parking_location, styles['table_content'])
                 ])
 
-        table = Table(table_data, colWidths=[1.3*inch, inch, inch, inch, inch, 0.7*inch, 1.7*inch], hAlign='LEFT')
+        table = Table(table_data, colWidths=[2*inch, inch, inch, inch, inch, 1.7*inch], hAlign='LEFT')
         table.setStyle(TableStyle([
             ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
             ('BOX', (0,0), (-1,-1), 0.25, colors.black),

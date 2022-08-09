@@ -12,22 +12,26 @@
   {% endif %}
 
 {% for aviso in active_notices %}
-  <div class="card text-center mt-3">
-    <div class="card-header">
+  {% if aviso.status == 2 %}
+    <div class="card text-center mt-3">
+  {% else %}
+    <div class="card text-center mt-3 text-bg-info">
+  {% endif %}
+      <div class="card-header">
+        Tienes una Salida {% if aviso.status == 2 %} Activa {% else %} ATRASADA {% endif %}
+      </div>
+      <div class="card-body" style="background: white; color: #1c1c1c;">
+        <h5 class="card-title"><a class="" href="{% url 'avisos:detail_notice' aviso.id %}">Aviso de Salida: {{ aviso.shortnotice.location }}</a></h5>
+        <p class="card-text">Si ya llegó la cordada, no te olvides de avisar la llegada.</p>
+        <a class="btn btn-info" href="{% url 'avisos:arrive_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Avisar Llegada"><i class="bi bi-house-fill"></i> Avisar Llegada</a>
+      </div>
       {% if aviso.status == 2 %}
-        Tienes una Salida Activa
+        <div class="card-footer text-muted">
       {% else %}
-        <i class="bi bi-house-fill"></i><b>Tienes una Salida ATRASADA</b>
+        <div class="card-footer text-muted" style="color: white !important;">
       {% endif %}
-    </div>
-    <div class="card-body">
-      <h5 class="card-title"><a class="" href="{% url 'avisos:detail_notice' aviso.id %}">Aviso de Salida: {{ aviso.shortnotice.location }}</a></h5>
-      <p class="card-text">Si ya llegó la cordada, no te olvides de avisar la llegada.</p>
-      <a class="btn btn-success" href="{% url 'avisos:arrive_shortnotice' aviso.id %}" data-toggle="tooltip" data-placement="top" title="Avisar Llegada"><i class="bi bi-house-fill"></i> Avisar Llegada</a>
-    </div>
-    <div class="card-footer text-muted">
-      Llegada Máxima: <h5>{{ aviso.max_end_date|date:"H:i - d/m/Y" }}</h5>
-    </div>
+        Llegada Máxima: <h5>{{ aviso.max_end_date|date:"H:i - d/m/Y" }}</h5>
+      </div>
   </div>
 {% endfor %}
 

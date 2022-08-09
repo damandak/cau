@@ -99,6 +99,9 @@ class CreateShortNoticeView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
         item = form.save()
         self.pk = item.pk
         return super().form_valid(form)
+
+    def get_initial(self):
+        return {"participants": [self.request.user.member.pk]}
     
     def get_success_url(self):
          return reverse('avisos:detail_notice', kwargs={'pk': self.object.pk})

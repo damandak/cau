@@ -123,7 +123,7 @@ class CreateFriendView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     form_class = FriendForm
     template_name = 'friend/create.html'
     success_url = reverse_lazy('friends_data')
-    success_message = 'Vehículo creado correctamente'
+    success_message = 'Amigo creado correctamente'
 
     def form_valid(self, form):
         form.instance.member = self.request.user.member

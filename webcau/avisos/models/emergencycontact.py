@@ -17,6 +17,10 @@ class EmergencyContact(SoftDeletionModel):
             models.UniqueConstraint(fields=['main_contact', 'member'], condition=models.Q(main_contact=True), name='unique_main_contact'),
         ]
 
+    def delete(self):
+        self.main_contact = False
+        return super().delete()
+
     def __str__(self):
         return str(self.name)
 

@@ -1,7 +1,7 @@
 {% load static %}
 {% if not user.member.main_emergencycontact %}
   <div class="alert alert-danger" style="margin-bottom: 0px">
-      No has definido a un contacto de emergencia como <strong><a href="{% url 'emergencycontacts_data' %}">contacto predeterminado.</a></strong>
+      No has definido a un contacto de emergencia como <strong><a href="{% url 'new_emergencycontact' %}">contacto predeterminado.</a></strong>
   </div>
 {% endif %}
 {% if user.member.medicalrecord.pending %}
