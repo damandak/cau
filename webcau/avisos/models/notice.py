@@ -464,6 +464,7 @@ class BaseNotice(SoftDeletionModel):
         return doc
 
     def mail(self, publication=False, arrival=False, late=False, cancel=False, mail_content=None):
+        beta_version = True
         if publication:
             mail_title = 'Aviso de Salida Corta: ' + self.location
             if mail_content:
@@ -504,6 +505,9 @@ class BaseNotice(SoftDeletionModel):
         pdf_name = pdf_name.replace(',', ' - ')
 
         doc = self.createPDF(buff, pdf_name)
+
+        if beta_version:
+            mail_content += '\n\n' + 'Esta es una versión beta del sistema de avisos. Si tiene problemas con el sistema, por favor contacte a los administradores.'
 
         email = EmailMessage(subject=mail_title, body=mail_content, from_email=mail_sender, to=mail_recipients, attachments=[(pdf_name, buff.getvalue(), 'application/pdf')])
         email.send()
