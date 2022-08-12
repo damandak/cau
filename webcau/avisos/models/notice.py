@@ -17,7 +17,7 @@ from reportlab.lib import colors
 from reportlab.pdfbase.pdfmetrics import stringWidth
 
 def datetime_now_rounder():
-    return tz.now().replace(minute=0, second=0, microsecond=0)
+    return tz.now().replace(hour=tz.now().hour + 1, minute=0, second=0, microsecond=0)
     
 class NoticeCategory(SoftDeletionModel):
   name = models.CharField(max_length=100)
