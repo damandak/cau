@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from avisos.views.notices import MyNoticesView, AllNoticesView, DetailNoticeView, CreateShortNoticeView, UpdateShortNoticeView, MemberAutocomplete, CarsAutocomplete, FriendsAutocomplete, SendNoticeView, ArrivedNoticeView, DeleteShortNoticeView
+from avisos.views.notices import MyNoticesView, AllNoticesView, DetailNoticeView, CreateShortNoticeView, UpdateShortNoticeView, MemberAutocomplete, CarsAutocomplete, FriendsAutocomplete, SendNoticeView, ArrivedNoticeView, DeleteShortNoticeView, DuplicateShortNoticeView
 from avisos.views.pdf_gen import PDFNoticeView
 from avisos.views.base import IndexView
 
@@ -11,6 +11,7 @@ urlpatterns = [
     path('avisos/', AllNoticesView.as_view(), name='avisos'),
     path('avisos/misavisos/', MyNoticesView.as_view(), name='myavisos'),
     path('avisos/nuevo_rapido/', CreateShortNoticeView.as_view(), name='new_shortnotice'),
+    path('avisos/nuevo_rapido/<int:pk>/', DuplicateShortNoticeView.as_view(), name='duplicate_shortnotice'),
     path('avisos/<int:pk>/editar', UpdateShortNoticeView.as_view(), name='edit_shortnotice'),
     path('avisos/<int:pk>/enviar', SendNoticeView.as_view(), name='send_shortnotice'),
     path('avisos/<int:pk>/eliminar', DeleteShortNoticeView.as_view(), name='delete_shortnotice'),

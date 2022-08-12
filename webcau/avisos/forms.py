@@ -274,8 +274,8 @@ class ShortNoticeForm(forms.ModelForm):
         help_texts = {
           'location': "Lugar donde se realizará la actividad",
           'route': "Ruta o equivalente donde se realizará la actividad",
-          'start_date': "Fecha y hora de inicio de la actividad",
-          'max_end_date': "Fecha y hora de fin de la actividad. Recuerda que debes tener señal para notificar tu llegada antes de esta hora. Si no hay notificación al superar el plazo, se activarán las alertas del club.",
+          'start_date': "Fecha y hora de inicio de la actividad. Recomendamos no cambiar esta fecha una vez que publicas el aviso, ya que el sistema no funcionará correctamente.",
+          'max_end_date': "Fecha y hora de fin de la actividad. Recuerda que debes tener señal para notificar tu llegada antes de esta hora. Si no hay notificación al superar el plazo, se activarán las alertas del club. Recomendamos no cambiar esta fecha una vez que publicas el aviso, ya que el sistema no funcionará correctamente.",
           'cau_contact': "Socio fuera de la cordada responsable de la actividad desde un lugar con señal para poder activar protocolos de emergencia en caso de ser necesario.",
           'participants': "Socios que participarán en la actividad",
           'cars': "Vehículos que se usarán para dirigirse a la actividad. Debes agregarlos previamente en la cuenta de alguien que participe en la salida, en 'amigos'.",

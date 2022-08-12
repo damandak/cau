@@ -28,6 +28,7 @@
         {% if aviso.status == 0 %}
           <a class="btn btn-light" href="{% url 'avisos:delete_shortnotice' aviso.id %}"><i class="bi-trash"></i> Eliminar</a>
         {% endif %}
+        <a class="btn btn-light" href="{% url 'avisos:duplicate_shortnotice' aviso.id %}"><i class="bi-node-plus"></i> Duplicar</a>
       {% endif %}
       <a class="btn btn-light" href="{% url 'avisos:pdf_notice' aviso.id %}"><i class="bi-download"></i> PDF</a>    
     </div>

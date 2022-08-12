@@ -106,6 +106,43 @@ class CreateShortNoticeView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
     def get_success_url(self):
          return reverse('avisos:detail_notice', kwargs={'pk': self.object.pk})
 
+class DuplicateShortNoticeView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = ShortNotice
+    form_class = ShortNoticeForm
+    template_name = 'avisos/shortnotice/create.html'
+    success_message = 'Aviso creado correctamente. Recuerda que debes enviarlo para que se active.'
+    original_notice = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        original_notice = ShortNotice.objects.get(pk=self.kwargs['pk'])
+        context.update({
+            'form': ShortNoticeForm(initial={
+                'category': original_notice.category,
+                'location': original_notice.location,
+                'route': original_notice.route,
+                'participants': original_notice.participants.all(),
+                'friends': original_notice.friends.all(),
+                'cau_contact': original_notice.cau_contact,
+                'cars': original_notice.cars.all(),
+                'parking_location': original_notice.parking_location,
+                'other_transportation': original_notice.other_transportation,
+                'description': original_notice.description,
+            })})
+        return context
+    
+    def form_valid(self, form):
+        form.instance.member = self.request.user.member
+        item = form.save()
+        self.pk = item.pk
+        return super().form_valid(form)
+
+    def get_initial(self):
+        return {"participants": [self.request.user.member.pk]}
+    
+    def get_success_url(self):
+         return reverse('avisos:detail_notice', kwargs={'pk': self.object.pk})
+
 class UpdateShortNoticeView(NoticeAuthMixin, SuccessMessageMixin, UpdateView):
     model = ShortNotice
     form_class = ShortNoticeForm
@@ -199,8 +236,6 @@ class SendNoticeView(NoticeAuthMixin, SuccessMessageMixin, UpdateView):
         form.instance.sent_by = self.request.user.member
         form.instance.sendto_caucontacts = True
         form.instance.sendto_participants = True
-        form.instance.sendto_emergencycontacts = True
-        form.instance.sendto_board = True
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
