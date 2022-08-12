@@ -9,7 +9,7 @@ class MedicalRecord(BaseModel):
     no_medical_record = models.BooleanField(default=False)
     sicknesses = models.TextField(null=True, blank=True)
     medications = models.TextField(null=True, blank=True)
-    risks = models.TextField(null=True, blank=True)
+    comments = models.TextField(null=True, blank=True)
     
     def __str__(self):
         return str(self.member) + " - " + str(self.sicknesses)
@@ -17,7 +17,7 @@ class MedicalRecord(BaseModel):
     def pending(self):
         if self.no_medical_record:
             return False
-        if self.sicknesses or self.medications or self.risks:
+        if self.sicknesses or self.medications or self.comments:
             return False
         return True
 

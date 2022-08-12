@@ -339,7 +339,7 @@ class BaseNotice(SoftDeletionModel):
             Paragraph("Nombre", styles['table_titles']),
             Paragraph("Enfermedades", styles['table_titles']),
             Paragraph("Medicamentos", styles['table_titles']),
-            Paragraph("Riesgos", styles['table_titles']),
+            Paragraph("Comentarios", styles['table_titles']),
             ])
         counter = 0
         for participant in self.participants.all():
@@ -348,7 +348,7 @@ class BaseNotice(SoftDeletionModel):
                 Paragraph(str(participant), styles['table_content']),
                 Paragraph(participant.medicalrecord.sicknesses, styles['table_content']),
                 Paragraph(participant.medicalrecord.medications, styles['table_content']),
-                Paragraph(participant.medicalrecord.risks, styles['table_content']),
+                Paragraph(participant.medicalrecord.comments, styles['table_content']),
                 ])
         for friend in self.friends.all():
             counter += 1
@@ -356,7 +356,7 @@ class BaseNotice(SoftDeletionModel):
                 Paragraph(str(friend), styles['table_content']),
                 Paragraph(friend.sicknesses, styles['table_content']),
                 Paragraph(friend.medications, styles['table_content']),
-                Paragraph(friend.risks, styles['table_content']),
+                Paragraph(friend.comments, styles['table_content']),
                 ])
 
         table = Table(table_data, colWidths=[2*inch, 2*inch, 2*inch, 1.7*inch], hAlign='LEFT')

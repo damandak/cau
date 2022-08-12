@@ -179,7 +179,7 @@
             <th scope="col">Socio</th>
             <th scope="col">Enfermedades</th>
             <th scope="col">Medicamentos</th>
-            <th scope="col">Riesgos</th>
+            <th scope="col">Comentarios</th>
           </tr>
         </thead>
         <tbody>
@@ -189,7 +189,7 @@
                 <td>{{ member }}</td>
                 <td>{{ member.medicalrecord.sicknesses }}</td>
                 <td>{{ member.medicalrecord.medications }}</td>
-                <td>{{ member.medicalrecord.risks }}</td>
+                <td>{{ member.medicalrecord.comments }}</td>
               </tr>
             {% endif %}
           {% endfor %}
@@ -198,7 +198,7 @@
               <td>{{ friend }}</td>
               <td>{{ friend.sicknesses }}</td>
               <td>{{ friend.medications }}</td>
-              <td>{{ friend.risks }}</td>
+              <td>{{ friend.comments }}</td>
             </tr>
           {% endfor %}
         </tbody>

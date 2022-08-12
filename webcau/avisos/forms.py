@@ -66,19 +66,19 @@ class MemberForm(forms.ModelForm):
 class MedicalForm(forms.ModelForm):
     class Meta:
         model = MedicalRecord
-        fields = ('no_medical_record', 'sicknesses', 'medications', 'risks')
+        fields = ('no_medical_record', 'sicknesses', 'medications', 'comments')
         widgets = {
             'member': forms.HiddenInput(),
             'no_medical_record': forms.CheckboxInput(attrs={'class': 'form-check-inline'}),
             'sicknesses': forms.TextInput(attrs={'class': 'form-control'}),
             'medications': forms.TextInput(attrs={'class': 'form-control'}),
-            'risks': forms.TextInput(attrs={'class': 'form-control'}),
+            'comments': forms.TextInput(attrs={'class': 'form-control'}),
         }
         labels = {
             'no_medical_record': 'No tengo nada que ingresar.',
             'sicknesses': 'Enfermedades',
             'medications': 'Medicamentos',
-            'risks': 'Riesgos',
+            'comments': 'Comentarios',
         }
         exclude = ['member']
         action = forms.CharField(max_length=60, widget=forms.HiddenInput())
@@ -91,7 +91,7 @@ class FriendForm(forms.ModelForm):
         self.fields[field].required = True
     class Meta:
         model = Friend
-        fields = ('member', 'name', 'middlename', 'first_surname', 'second_surname', 'rut', 'birth_date', 'phone_number', 'email', 'emergencycontact_name', 'emergencycontact_phone', 'emergencycontact_email', 'emergencycontact_relationship', 'sicknesses', 'medications', 'risks')
+        fields = ('member', 'name', 'middlename', 'first_surname', 'second_surname', 'rut', 'birth_date', 'phone_number', 'email', 'emergencycontact_name', 'emergencycontact_phone', 'emergencycontact_email', 'emergencycontact_relationship', 'sicknesses', 'medications', 'comments')
         widgets = {
             'member': forms.HiddenInput(),
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -108,7 +108,7 @@ class FriendForm(forms.ModelForm):
             'emergencycontact_relationship': forms.TextInput(attrs={'class': 'form-control'}),
             'sicknesses': forms.TextInput(attrs={'class': 'form-control'}),
             'medications': forms.TextInput(attrs={'class': 'form-control'}),
-            'risks': forms.TextInput(attrs={'class': 'form-control'}),
+            'comments': forms.TextInput(attrs={'class': 'form-control'}),
         }
         labels = {
             'name': 'Nombre',
@@ -125,7 +125,7 @@ class FriendForm(forms.ModelForm):
             'emergencycontact_relationship': 'Parentesco de Contacto de Emergencia',
             'sicknesses': 'Enfermedades',
             'medications': 'Medicamentos',
-            'risks': 'Riesgos de salud',
+            'comments': 'Comentarios (salud)',
         }
         required = {
           'name',

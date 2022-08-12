@@ -107,7 +107,7 @@ class Friend(SoftDeletionModel):
 
     sicknesses = models.CharField(max_length=100, blank=True)
     medications = models.CharField(max_length=100, blank=True)
-    risks = models.CharField(max_length=100, blank=True)
+    comments = models.CharField(max_length=100, blank=True)
 
     def delete(self):
       self.member = None
