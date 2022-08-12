@@ -61,14 +61,18 @@ class BaseNotice(SoftDeletionModel):
     arrival_confirmation_date = models.DateTimeField(null=True, blank=True)
     arrival_confirmation_by = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="arrival_confirmation_by", blank=True, null=True)
 
+    arrival_message = models.TextField(blank=True, null=True)
+    arrival_result = models.TextField(blank=True, null=True)
+    arrival_conditions = models.TextField(blank=True, null=True)
+    
     def __str__(self):
         return self.category.name + ": " + self.location + " - " + self.route
 
     def start_celery_task(self, number):
         if number == 1:
-            print("vamos a empezar la espera hasta start_date")
+            print("vamos a empezar la espera hasta start_date" + str(self.start_date))
             celery.current_app.send_task(name='avisos.tasks.wait_for_start_time', args=(self.id,), eta=self.start_date)
-            print("ya hemos empezado la espera hasta start_date")
+            print("ya hemos empezado la espera hasta start_date" + str(self.start_date))
         elif number == 2:
             print("vamos a empezar la espera hasta fin máximo")
             celery.current_app.send_task(name='avisos.tasks.wait_for_max_end_time', args=(self.id,), eta=self.max_end_date)
@@ -84,6 +88,8 @@ class BaseNotice(SoftDeletionModel):
         return list(self.participants.all()) + [self.cau_contact]
 
     def include_email(self, email, late_alert=False):
+        if email == "" or email is None:
+            return
         if EmailRecipient.objects.filter(email=email).exists():
             self.email_recipients.add(EmailRecipient.objects.filter(email=email).first())
             if late_alert:
@@ -472,14 +478,17 @@ class BaseNotice(SoftDeletionModel):
               mail_content = GlobalSettings.objects.first().notice_late_mail_content
             else:
               mail_content = 'Notificación de salida atrasada respecto a su fecha de llegada máxima. Si la información es errónea, por favor actualizar llegada en el sitio web de socios CAU.'
+            mail_content = mail_content + '\n\n' + 'Link al aviso: https://www.cau.cl/avisos/' + str(self.id)
             mail_sender = self.sent_by.user.email # O un correo institucional?
             mail_recipients = self.email_late_alert_recipients.all()
         elif arrival:
-            mail_title = 'Aviso de Llegada: ' + self.location
+            mail_title = 'Aviso de Salida Corta: ' + self.location
             if GlobalSettings.objects.first().notice_arrival_mail_content:
               mail_content = GlobalSettings.objects.first().notice_arrival_mail_content
             else:
               mail_content = 'Notificación de llegada de la cordada.'
+            if self.arrival_message:
+                mail_content += '\n\n' + self.arrival_message
             mail_sender = self.sent_by.user.email # O un correo institucional? O quien notifica?
             mail_recipients = self.email_recipients.all() # ESTÁ BIEN PORQUE DEBE SER LA MISMA GENTE QUE RECIBIÓ EL AVISO INICIALMENTE
         elif cancel:

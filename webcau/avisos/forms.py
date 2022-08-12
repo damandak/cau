@@ -304,7 +304,7 @@ class ShortNoticeForm(forms.ModelForm):
 class SendNoticeForm(forms.ModelForm):
     sendto_caucontacts_fake = forms.BooleanField(required=False, label='Enviar a contactos CAU', widget=forms.CheckboxInput(attrs={'class': 'form-check-inline big-checkbox', 'disabled': True, 'checked': True}))
     sendto_participants_fake = forms.BooleanField(required=False, label='Enviar a cordada', widget=forms.CheckboxInput(attrs={'class': 'form-check-inline big-checkbox', 'disabled': True, 'checked': True}))
-    sendto_board_fake = forms.BooleanField(required=False, label='Enviar a directiva', widget=forms.CheckboxInput(attrs={'class': 'form-check-inline big-checkbox', 'disabled': True, 'checked': True}))
+    sendto_board = forms.BooleanField(required=False, label='Enviar a directiva', widget=forms.CheckboxInput(attrs={'class': 'form-check-inline big-checkbox', 'checked': True}))
     sendto_emergencycontacts = forms.BooleanField(required=False, label='Enviar a contactos de emergencia', widget=forms.CheckboxInput(attrs={'class': 'form-check-inline big-checkbox', 'checked': True}))
     sendto_caumembers = forms.BooleanField(required=False, label='Enviar a Google Group CAU', widget=forms.CheckboxInput(attrs={'class': 'form-check-inline big-checkbox', 'checked': True}))
     sendto_otheremails = forms.CharField(required=False, label='Incluir otros correos electrónicos (sepáralos con comas ",")', widget=forms.TextInput(attrs={'class': 'form-control email-addresses'}))
@@ -312,7 +312,6 @@ class SendNoticeForm(forms.ModelForm):
 
     sendto_caucontacts = forms.BooleanField(required=False, initial=True, label='Enviar a contactos CAU', widget=forms.HiddenInput())
     sendto_participants = forms.BooleanField(required=False, initial=True, label='Enviar a cordada', widget=forms.HiddenInput())
-    sendto_board = forms.BooleanField(required=False, initial=True, label='Enviar a directiva', widget=forms.HiddenInput())
 
     class Meta:
         model = ShortNotice
@@ -354,10 +353,17 @@ class SendNoticeForm(forms.ModelForm):
 class ArrivedNoticeForm(forms.ModelForm):
     class Meta:
         model = ShortNotice
-        fields = ()
+        fields = ('arrival_message',)
         widgets = {
+            'arrival_message': forms.Textarea(attrs={'class': 'form-control'}),
             'arrival_confirmation_date': forms.HiddenInput(),
             'arrival_confirmation_by': forms.HiddenInput(),
+        }
+        help_texts = {
+            'arrival_message': 'Mensaje que se enviará en el correo de confirmación de llegada.',
+        }
+        labels = {
+            'arrival_message': 'Mensaje de confirmación de llegada',
         }
         exclude = ['arrival_confirmation_date', 'arrival_confirmation_by']
         action = forms.CharField(max_length=60, widget=forms.HiddenInput())

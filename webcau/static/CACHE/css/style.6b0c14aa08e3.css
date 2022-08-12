@@ -1,0 +1,182 @@
+/* line 1, static/css/style.scss */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; }
+
+/* line 7, static/css/style.scss */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1; }
+
+/* line 20, static/css/style.scss */
+.tooltip:hover .tooltiptext {
+  visibility: visible; }
+
+/* line 24, static/css/style.scss */
+.table_link {
+  text-decoration: none;
+  font-weight: bold; }
+
+/* line 28, static/css/style.scss */
+.table_link > a:link, .table_link > a:visited {
+  text-decoration: none;
+  font-weight: bold; }
+
+/* line 33, static/css/style.scss */
+.profile_settings_image {
+  max-width: 25rem;
+  max-height: 25rem;
+  margin: auto;
+  width: auto;
+  height: auto; }
+
+/* line 41, static/css/style.scss */
+.card_profile_image {
+  max-width: 262px;
+  max-height: 165px;
+  height: fit-content;
+  width: fit-content;
+  margin: auto; }
+
+/* line 50, static/css/style.scss */
+.big-checkbox {
+  width: 20px;
+  height: 20px; }
+
+/* line 55, static/css/style.scss */
+.btn-notice:hover .btn-notice-text {
+  display: inline-block !important; }
+
+/* line 59, static/css/style.scss */
+.btn-notice {
+  width: 50px;
+  height: 40px;
+  line-height: 27px; }
+
+@media (max-width: 750px) {
+  /* line 67, static/css/style.scss */
+  .container {
+    margin: auto;
+    padding: 0;
+    width: 100vw; }
+  /* line 72, static/css/style.scss */
+  .row {
+    margin: auto;
+    padding: 0; }
+  /* line 76, static/css/style.scss */
+  .row-form {
+    margin: auto !important;
+    padding: 0 !important; }
+  /* line 80, static/css/style.scss */
+  .aviso-card {
+    margin: auto !important;
+    width: 80vw !important; } }
+
+/* line 86, static/css/style.scss */
+.select2 {
+  width: 100% !important; }
+
+/* line 89, static/css/style.scss */
+.select2-selection {
+  height: 100% !important; }
+
+/* line 92, static/css/style.scss */
+.fa-circle-question {
+  font-size: 1.5rem;
+  color: #ccc;
+  line-height: 100% !important;
+  height: 100% !important; }
+
+/* line 98, static/css/style.scss */
+.field-info {
+  height: 100%; }
+
+/* line 102, static/css/style.scss */
+label[for=id_phone_number_0], label[for=id_emergencycontact_phone_0] {
+  display: inline-block; }
+
+/* line 105, static/css/style.scss */
+label[for=id_phone_number_0] {
+  margin-left: 60px; }
+
+/* line 108, static/css/style.scss */
+span.text-danger {
+  margin-right: 60px; }
+
+/* line 111, static/css/style.scss */
+#id_phone_number_0, #id_emergencycontact_phone_0 {
+  width: 30%;
+  display: inline-block; }
+
+/* line 116, static/css/style.scss */
+#id_phone_number_1, #id_emergencycontact_phone_1 {
+  width: 70%;
+  display: inline-block; }
+
+/* LOGIN */
+/* line 122, static/css/style.scss */
+.login-box {
+  width: 25rem;
+  max-width: 330px;
+  padding: 25px;
+  margin: auto;
+  color: white; }
+
+/* line 129, static/css/style.scss */
+.login-box h2 {
+  font-weight: 400; }
+
+/* line 132, static/css/style.scss */
+.login-box a {
+  color: white; }
+
+/* line 135, static/css/style.scss */
+.login-box .alert {
+  margin-left: -20px;
+  margin-right: -20px; }
+
+/* line 140, static/css/style.scss */
+.logo-auth {
+  margin-bottom: 0px;
+  width: 150px; }
+
+@media (min-height: 620px) {
+  /* line 145, static/css/style.scss */
+  .logo-auth {
+    position: absolute;
+    bottom: 10px;
+    left: calc(50vw - 75px);
+    margin-top: 0px; } }
+
+@media (max-height: 620px) {
+  /* line 153, static/css/style.scss */
+  .logo-auth {
+    position: relative;
+    margin: 0px;
+    margin-top: 20px; } }
+
+/* line 160, static/css/style.scss */
+.auth-body {
+  margin: 1px;
+  background: #2193b0;
+  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #6dd5ed, #2193b0);
+  /* Chrome 10-25, Safari 5.1-6 */
+  background-image: linear-gradient(to right, #6dd5ed, #2193b0), url("https://lh3.googleusercontent.com/pw/AL9nZEWnDNoLIEfDPkT78OnVLn1l3yccLIkEIvlgLITiM7buq8hEMXdnmoYDqt3Mj4SSQh4U1uS2WJlwmJcbjeijX4B4rC02HCAW1R2mh4KFqo1yqpmY9rR4CDHKH-8afwKG1rbzQ19a7w96xNium5p6-lW1_g=w2134-h1422-no?authuser=1");
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background-image: linear-gradient(to right, #ede6e3c4, #06969D), url("/static/images/fondo_login.jpg?92d6794b3377");
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  height: 100vh;
+  background-size: cover; }
+
+/* line 172, static/css/style.scss */
+.navbar {
+  padding: 0; }

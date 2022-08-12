@@ -214,7 +214,7 @@ class ArrivedNoticeView(NoticeAuthMixin, SuccessMessageMixin, UpdateView):
     model = ShortNotice
     form_class = ArrivedNoticeForm
     template_name = 'avisos/shortnotice/arrival.html'
-    success_message = 'Aviso enviado correctamente.'
+    success_message = 'Llegada confirmada correctamente.'
 
     def get_success_url(self):
          return reverse('avisos:detail_notice', kwargs={'pk': self.object.pk})
