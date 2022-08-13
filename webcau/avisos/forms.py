@@ -309,6 +309,7 @@ class SendNoticeForm(forms.ModelForm):
     sendto_caumembers = forms.BooleanField(required=False, label='Enviar a Google Group CAU', widget=forms.CheckboxInput(attrs={'class': 'form-check-inline big-checkbox', 'checked': True}))
     sendto_otheremails = forms.CharField(required=False, label='Incluir otros correos electrónicos (sepáralos con comas ",")', widget=forms.TextInput(attrs={'class': 'form-control email-addresses'}))
     mail_body = forms.CharField(required=False, label='Mensaje', widget=forms.Textarea(attrs={'class': 'form-control'}))
+    include_pdf = forms.BooleanField(required=False, label='Incluir PDF como adjunto', widget=forms.CheckboxInput(attrs={'class': 'form-check-inline big-checkbox', 'checked': True}))
 
     sendto_caucontacts = forms.BooleanField(required=False, initial=True, label='Enviar a contactos CAU', widget=forms.HiddenInput())
     sendto_participants = forms.BooleanField(required=False, initial=True, label='Enviar a cordada', widget=forms.HiddenInput())

@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db.models.signals import post_save
 import celery
 from django.dispatch import receiver
@@ -17,7 +18,13 @@ from reportlab.lib import colors
 from reportlab.pdfbase.pdfmetrics import stringWidth
 
 def datetime_now_rounder():
-    return tz.now().replace(hour=tz.now().hour + 1, minute=0, second=0, microsecond=0)
+    if tz.now().hour == 22:
+        return tz.now().replace(hour=23, minute=0, second=0, microsecond=0)
+    elif tz.now().hour == 23:
+        temp_time = tz.now() + timedelta(days=1)
+        return temp_time.replace(hour=0, minute=0, second=0, microsecond=0)
+    else:
+        return tz.now().replace(hour=tz.now().hour + 1, minute=0, second=0, microsecond=0)
     
 class NoticeCategory(SoftDeletionModel):
   name = models.CharField(max_length=100)
@@ -60,6 +67,7 @@ class BaseNotice(SoftDeletionModel):
     sent_by = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="sent_by", blank=True, null=True)
     arrival_confirmation_date = models.DateTimeField(null=True, blank=True)
     arrival_confirmation_by = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="arrival_confirmation_by", blank=True, null=True)
+    include_pdf = models.BooleanField(default=True)
 
     arrival_message = models.TextField(blank=True, null=True)
     arrival_result = models.TextField(blank=True, null=True)
@@ -465,8 +473,8 @@ class BaseNotice(SoftDeletionModel):
 
     def mail(self, publication=False, arrival=False, late=False, cancel=False, mail_content=None):
         beta_version = True
+        mail_title = 'Aviso de Salida Corta: ' + self.location
         if publication:
-            mail_title = 'Aviso de Salida Corta: ' + self.location
             if mail_content:
                 mail_content = mail_content
             else:
@@ -474,7 +482,6 @@ class BaseNotice(SoftDeletionModel):
             mail_sender = self.sent_by.user.email
             mail_recipients = self.email_recipients.all()
         elif late:
-            mail_title = 'Aviso de Atraso: ' + self.location
             if GlobalSettings.objects.first().notice_late_mail_content:
               mail_content = GlobalSettings.objects.first().notice_late_mail_content
             else:
@@ -483,7 +490,6 @@ class BaseNotice(SoftDeletionModel):
             mail_sender = self.sent_by.user.email # O un correo institucional?
             mail_recipients = self.email_late_alert_recipients.all()
         elif arrival:
-            mail_title = 'Aviso de Salida Corta: ' + self.location
             if GlobalSettings.objects.first().notice_arrival_mail_content:
               mail_content = GlobalSettings.objects.first().notice_arrival_mail_content
             else:
@@ -493,23 +499,24 @@ class BaseNotice(SoftDeletionModel):
             mail_sender = self.sent_by.user.email # O un correo institucional? O quien notifica?
             mail_recipients = self.email_recipients.all() # ESTÁ BIEN PORQUE DEBE SER LA MISMA GENTE QUE RECIBIÓ EL AVISO INICIALMENTE
         elif cancel:
-            mail_title = 'Aviso Cancelado: ' + self.location
-            mail_content = 'TEXTO DE EXPLICACIÓN CANCELACIÓN' # Debiera incluirse un texto de llegada? como funcionaría esto?
+            mail_content = 'Salida Cancelada' # Debiera incluirse un texto de llegada? como funcionaría esto?
             mail_sender = self.sent_by.user.email # O un correo institucional? O quien notifica?
             mail_recipients = self.email_recipients.all() # ESTÁ BIEN PORQUE DEBE SER LA MISMA GENTE QUE RECIBIÓ EL AVISO INICIALMENTE
         else:
             return
 
-        buff = io.BytesIO()
-        pdf_name = "Aviso de Salida - " + self.location + ".pdf"
-        pdf_name = pdf_name.replace(',', ' - ')
-
-        doc = self.createPDF(buff, pdf_name)
-
         if beta_version:
             mail_content += '\n\n' + 'Esta es una versión beta del sistema de avisos. Si tiene problemas con el sistema, por favor contacte a los administradores.'
 
-        email = EmailMessage(subject=mail_title, body=mail_content, from_email=mail_sender, to=mail_recipients, attachments=[(pdf_name, buff.getvalue(), 'application/pdf')])
+        if publication and self.include_pdf:
+            buff = io.BytesIO()
+            pdf_name = "Aviso de Salida - " + self.location + ".pdf"
+            pdf_name = pdf_name.replace(',', ' - ')
+            doc = self.createPDF(buff, pdf_name)
+            email = EmailMessage(subject=mail_title, body=mail_content, from_email=mail_sender, to=mail_recipients, attachments=[(pdf_name, buff.getvalue(), 'application/pdf')])
+        else:
+            email = EmailMessage(subject=mail_title, body=mail_content, from_email=mail_sender, to=mail_recipients)
+
         email.send()
     
     @property
