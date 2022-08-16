@@ -177,7 +177,7 @@ class AllNoticesView(NoticesView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         default_page = 1
-        avisos_full = BaseNotice.objects.exclude(status=0)
+        avisos_full = BaseNotice.objects.exclude(status=0).exclude(status=5)
         paginator = Paginator(avisos_full, 6) # Show 5 notices per page
         page = self.request.GET.get('page', default_page)
         try:

@@ -76,6 +76,9 @@ class BaseNotice(SoftDeletionModel):
     def __str__(self):
         return self.category.name + ": " + self.location + " - " + self.route
 
+    def participants_tostring(self):
+        return ", ".join([str(member) for member in self.participants.all()])
+
     def start_celery_task(self, number):
         if number == 1:
             print("vamos a empezar la espera hasta start_date" + str(self.start_date))
@@ -252,6 +255,7 @@ class BaseNotice(SoftDeletionModel):
         table_data.append([
             Paragraph('', styles['table_titles']),
             Paragraph("Nombre", styles['table_titles']),
+            Paragraph("Rut", styles['table_titles']),
             Paragraph("Teléfono", styles['table_titles']),
             Paragraph("Contacto Emergencia", styles['table_titles']),
             Paragraph("Teléfono Contacto Emergencia", styles['table_titles'])
@@ -262,6 +266,7 @@ class BaseNotice(SoftDeletionModel):
             table_data.append([
                 Paragraph(str(counter), styles['table_titles']),
                 Paragraph(str(participant), styles['table_content']),
+                Paragraph(str(participant.rut), styles['table_content']),
                 Paragraph(str(participant.phone_number), styles['table_content']),
                 Paragraph(str(participant.main_emergencycontact), styles['table_content']),
                 Paragraph(str(participant.main_emergencycontact.phone_number), styles['table_content'])
@@ -272,12 +277,13 @@ class BaseNotice(SoftDeletionModel):
             table_data.append([
                 Paragraph(str(counter), styles['table_titles']),
                 Paragraph(str(friend), styles['table_content']),
+                Paragraph(str(friend.rut), styles['table_content']),
                 Paragraph(str(friend.phone_number), styles['table_content']),
                 Paragraph(str(friend.emergencycontact_name), styles['table_content']),
                 Paragraph(str(friend.emergencycontact_phone), styles['table_content'])
                 ])
 
-        table = Table(table_data, colWidths=[0.2*inch, 2*inch, 1.5*inch, 2*inch, 2*inch], hAlign='LEFT')
+        table = Table(table_data, colWidths=[0.2*inch, 2*inch, 1*inch, 1.25*inch, 2*inch, 1.25*inch], hAlign='LEFT')
         table.setStyle(TableStyle([
             ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
             ('BOX', (0,0), (-1,-1), 0.25, colors.black),
@@ -474,6 +480,14 @@ class BaseNotice(SoftDeletionModel):
     def mail(self, publication=False, arrival=False, late=False, cancel=False, mail_content=None):
         beta_version = True
         mail_title = 'Aviso de Salida Corta: ' + self.location
+        notice_summary = 'Lugar: ' + str(self.location)
+        notice_summary += '\n\nRuta: ' + str(self.route)
+        notice_summary += '\n\nFecha de Salida: ' + str(tz.localtime(self.start_date).strftime('%d-%b-%Y, %H:%M'))
+        notice_summary += '\n\nFecha de Llegada: ' + tz.localtime(self.max_end_date).strftime('%d-%b-%Y, %H:%M')
+        notice_summary += '\n\nParticipantes: ' + str(self.participants_tostring())
+        notice_summary += '\n\nContacto CAU: ' + str(self.cau_contact)
+        notice_summary += '\n\nLink al aviso de salida: https://www.cau.cl/avisos/' + str(self.id)
+
         if publication:
             if mail_content:
                 mail_content = mail_content
@@ -486,7 +500,6 @@ class BaseNotice(SoftDeletionModel):
               mail_content = GlobalSettings.objects.first().notice_late_mail_content
             else:
               mail_content = 'Notificación de salida atrasada respecto a su fecha de llegada máxima. Si la información es errónea, por favor actualizar llegada en el sitio web de socios CAU.'
-            mail_content = mail_content + '\n\n' + 'Link al aviso: https://www.cau.cl/avisos/' + str(self.id)
             mail_sender = self.sent_by.user.email # O un correo institucional?
             mail_recipients = self.email_late_alert_recipients.all()
         elif arrival:
@@ -505,6 +518,7 @@ class BaseNotice(SoftDeletionModel):
         else:
             return
 
+        mail_content += '\n\n' + notice_summary
         if beta_version:
             mail_content += '\n\n' + 'Esta es una versión beta del sistema de avisos. Si tiene problemas con el sistema, por favor contacte a los administradores.'
 

@@ -23,9 +23,6 @@ class Member(SoftDeletionModel):
 
     profile_image = models.ImageField(upload_to='profile_images', blank=True, validators =[file_size], default = 'default.png')
 
-    def __str__(self):
-        return self.user.username
-
     def get_absolute_url(self):
         return reverse('member-detail', kwargs={'pk': self.pk})
     

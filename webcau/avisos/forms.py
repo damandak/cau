@@ -346,6 +346,7 @@ class SendNoticeForm(forms.ModelForm):
         mail_content = self.cleaned_data['mail_body']
 
         if commit:
+            instance.include_pdf = self.cleaned_data['include_pdf']
             instance.save()
             instance.publish_notice(mail_content = mail_content)
 
