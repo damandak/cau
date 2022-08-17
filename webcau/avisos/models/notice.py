@@ -486,7 +486,7 @@ class BaseNotice(SoftDeletionModel):
         notice_summary += '\n\nFecha de Llegada: ' + tz.localtime(self.max_end_date).strftime('%d-%b-%Y, %H:%M')
         notice_summary += '\n\nParticipantes: ' + str(self.participants_tostring())
         notice_summary += '\n\nContacto CAU: ' + str(self.cau_contact)
-        notice_summary += '\n\nLink al aviso de salida: https://www.cau.cl/avisos/' + str(self.id)
+        notice_summary += '\n\nLink al aviso de salida: https://socios.cau.cl/avisos/' + str(self.id)
 
         if publication:
             if mail_content:
