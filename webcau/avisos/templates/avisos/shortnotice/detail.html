@@ -11,7 +11,7 @@
       </div>
     {% endfor %}
   {% endif %}
-  <div class="container justify-content-md-center text-dark">
+  <div class="container justify-content-md-center text-dark" style="width:25rem; padding:0px;">
     <div class="row mt-4">  
       <h4 class="mt-1 mb-2">
         {{ aviso.shortnotice }}<br>
@@ -30,7 +30,9 @@
         {% endif %}
         <a class="btn btn-light" href="{% url 'avisos:duplicate_shortnotice' aviso.id %}"><i class="bi-node-plus"></i> Duplicar</a>
       {% endif %}
-      <a class="btn btn-light" href="{% url 'avisos:pdf_notice' aviso.id %}"><i class="bi-download"></i> PDF</a>    
+    </div>
+    <div class="btn-group btn-group-lg mb-3" role="group" style="width:25rem;">
+      <a class="btn btn-light" href="{% url 'avisos:pdf_notice' aviso.id %}"><i class="bi-download"></i> PDF</a>
     </div>
   </div>
 
