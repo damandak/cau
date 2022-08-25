@@ -1,9 +1,9 @@
 # Web CAU v.0.1
-Sitio de socios del [Club Andino Universitario](https://www.cau.cl) desarrollado por Damir Mandakovic.
+Sitio de socios del [Club Andino Universitario](https://www.cau.cl).
 Tiene como principal propósito gestionar avisos de salida a la montaña u otros.
 Se espera que en el futuro ayude a la gestión de otras funcionalidades.
 
-Website for members of [Club Andino Universitario](https://www.cau.cl) developed by Damir Mandakovic.
+Website for members of [Club Andino Universitario](https://www.cau.cl).
 Main purpose is to manage mountain trips notices or others.
 In the future it's expected to help the management of more functionalities.
 
