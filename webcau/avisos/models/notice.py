@@ -435,7 +435,7 @@ class BaseNotice(SoftDeletionModel):
         text = "Cuerpos de Rescate Oficiales"
         Story.append(Paragraph(text, styles["final_titles"]))
         Story.append(Spacer(1, 8))
-        text = "Contacto Cuerpo Socorro Andino (CSA): 226994764 - 226989094"
+        text = "Contacto Cuerpo Socorro Andino (CSA): 136"
         Story.append(Paragraph(text, styles["notice_bold"]))
         text = "Carabineros: 133"
         Story.append(Paragraph(text, styles["notice_bold"]))
