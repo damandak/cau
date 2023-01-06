@@ -7,6 +7,10 @@ class GlobalSettings(BaseModel):
     notice_arrival_mail_content = models.TextField(null=True, blank=True)
     notice_late_mail_content = models.TextField(null=True, blank=True)
 
+    class Meta:
+        verbose_name = "Configuración global"
+        verbose_name_plural = "Configuración global"
+        
     def has_add_permission(self, request):
         # check if generally has add permission
         retVal = super().has_add_permission(request)

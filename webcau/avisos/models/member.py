@@ -14,7 +14,7 @@ class Member(SoftDeletionModel):
     middlename = models.CharField(max_length=100, blank=True)
     first_surname = models.CharField(max_length=100)
     second_surname = models.CharField(max_length=100, blank=True)
-    rut = models.CharField(max_length=20)
+    rut = models.CharField(max_length=20, unique=True)
     birth_date = models.DateField(null=True, blank=True)
     enrollment_date = models.DateField(null=True, blank=True)
     phone_number = PhoneNumberField(null=True, blank=True)
@@ -23,16 +23,27 @@ class Member(SoftDeletionModel):
 
     profile_image = models.ImageField(upload_to='profile_images', blank=True, validators =[file_size], default = 'default.png')
 
+    class Meta:
+        verbose_name = "Socio"
+        verbose_name_plural = "Socios"
+        ordering = ['name', 'first_surname']
+
     def get_absolute_url(self):
         return reverse('member-detail', kwargs={'pk': self.pk})
     
     def __str__(self):
         if self.name and self.first_surname:
-            middle = (self.middlename + " ") if self.use_middlename else ""
+            middle = (self.middlename) if self.use_middlename else ""
             last = self.second_surname if self.use_second_surname else ""
-            names = self.name + " " + middle
-            surnames = self.first_surname + " " + last
-            return names + surnames
+            if middle == "":
+                names = self.name
+            else:
+                names = self.name + " " + middle
+            if last == "":
+                surnames = self.first_surname
+            else:
+                surnames = self.first_surname + " " + last
+            return names + " " + surnames
         return self.user.username
 
     @property
@@ -53,6 +64,11 @@ class ClubBoard(SoftDeletionModel):
     description = models.TextField(blank=True)
     members = models.ManyToManyField(Member, blank=True, through='ClubBoardMember')
 
+    class Meta:
+        verbose_name = "Directiva"
+        verbose_name_plural = "Directivas"
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
@@ -61,6 +77,11 @@ class ClubBoardMember(SoftDeletionModel):
     clubboard = models.ForeignKey(ClubBoard, on_delete=models.CASCADE)
     position = models.CharField(max_length=100)
     receivenotices = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Miembro de la directiva"
+        verbose_name_plural = "Miembros de la directiva"
+        ordering = ['clubboard', 'position']
 
     def __str__(self):
         return self.position + " en " + self.clubboard.name
@@ -105,6 +126,11 @@ class Friend(SoftDeletionModel):
     sicknesses = models.CharField(max_length=100, blank=True)
     medications = models.CharField(max_length=100, blank=True)
     comments = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        verbose_name = "Amigo"
+        verbose_name_plural = "Amigos"
+        ordering = ['name', 'first_surname']
 
     def delete(self):
       self.member = None

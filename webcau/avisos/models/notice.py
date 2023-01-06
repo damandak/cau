@@ -5,7 +5,7 @@ from django.dispatch import receiver
 from django.utils import timezone as tz
 from django.core.mail import send_mail, EmailMessage
 from .base import *
-from .member import Member, EmailRecipient, ClubBoard, Friend
+from .member import Member, EmailRecipient, ClubBoard, Friend, ClubBoardMember
 from .car import Car
 import io
 from .global_settings import *
@@ -29,8 +29,14 @@ def datetime_now_rounder():
 class NoticeCategory(SoftDeletionModel):
   name = models.CharField(max_length=100)
   priority = models.IntegerField(default=0)
+
+  class Meta:
+    verbose_name = "Categoría de aviso"
+    verbose_name_plural = "Categorías de avisos"
+    ordering = ['priority']
+
   def __str__(self):
-      return self.name
+    return self.name
 
 class BaseNotice(SoftDeletionModel):
     location = models.CharField(max_length=100)
@@ -73,11 +79,16 @@ class BaseNotice(SoftDeletionModel):
     arrival_result = models.TextField(blank=True, null=True)
     arrival_conditions = models.TextField(blank=True, null=True)
     
+    class Meta:
+        verbose_name = 'Aviso'
+        verbose_name_plural = 'Avisos'
+        ordering = ['-start_date']
+
     def __str__(self):
-        return self.category.name + ": " + self.location + " - " + self.route
+        return str(self.start_date.date()) + " - " + self.category.name + ": " + self.location + " - " + self.route
 
     def participants_tostring(self):
-        return ", ".join([str(member) for member in self.participants.all()])
+        return ", ".join([", ".join([str(member) for member in self.participants.all()]), ", ".join([str(friend) for friend in self.friends.all()])])
 
     def start_celery_task(self, number):
         if number == 1:
@@ -123,7 +134,10 @@ class BaseNotice(SoftDeletionModel):
     def include_board(self):
         if ClubBoard.objects.count() > 0:
             for member in ClubBoard.objects.first().members.all():
-                self.include_email(member.user.email, True)
+                # check if clubboardmembers that have this member receivenotices
+                clubboardmember = ClubBoardMember.objects.filter(member=member).first()
+                if clubboardmember and clubboardmember.receivenotices:
+                    self.include_email(member.user.email, True)
     
     def include_emergencycontacts(self):
         for member in self.participants.all():
@@ -209,27 +223,28 @@ class BaseNotice(SoftDeletionModel):
         Story.append(Paragraph(text, styles["main_title"]))
         Story.append(Spacer(1, 12))
 
-        ## Table: Contacto CAU
-        table_data = []
-        table_data.append([Paragraph("Contacto CAU: ", styles["notice_bold"]), Paragraph(str(self.cau_contact), styles["notice"])])
-        table_data.append([Paragraph("Teléfono contacto: ", styles["notice_bold"]), Paragraph(str(self.cau_contact.phone_number), styles["notice"])])
-        table_data.append([Paragraph("Email contacto: ", styles["notice_bold"]), Paragraph(self.cau_contact.user.email, styles["notice"])])
-        # Max End Date in Local Timezone
-        table_data.append([Paragraph("Fecha de regreso: ", styles["notice_bold"]), Paragraph(tz.localtime(self.max_end_date).strftime('%d-%b-%Y'), styles["notice"])])
-        table_data.append([Paragraph("Hora de regreso: ", styles["notice_bold"]), Paragraph(tz.localtime(self.max_end_date).strftime('%H:%M'), styles["notice"])])
+        if self.cau_contact:
+            ## Table: Contacto CAU
+            table_data = []
+            table_data.append([Paragraph("Contacto CAU: ", styles["notice_bold"]), Paragraph(str(self.cau_contact), styles["notice"])])
+            table_data.append([Paragraph("Teléfono contacto: ", styles["notice_bold"]), Paragraph(str(self.cau_contact.phone_number), styles["notice"])])
+            table_data.append([Paragraph("Email contacto: ", styles["notice_bold"]), Paragraph(self.cau_contact.user.email, styles["notice"])])
+            # Max End Date in Local Timezone
+            table_data.append([Paragraph("Fecha de regreso: ", styles["notice_bold"]), Paragraph(tz.localtime(self.max_end_date).strftime('%d-%b-%Y'), styles["notice"])])
+            table_data.append([Paragraph("Hora de regreso: ", styles["notice_bold"]), Paragraph(tz.localtime(self.max_end_date).strftime('%H:%M'), styles["notice"])])
 
 
-        table_max_width = 1.4*inch
-        table_max_width = max(table_max_width, stringWidth(str(self.cau_contact), styles["notice"].fontName, styles["notice"].fontSize)/2 + 0.2*inch)
-        table_max_width = max(table_max_width, stringWidth(str(self.cau_contact.phone_number), styles["notice"].fontName, styles["notice"].fontSize) + 0.2*inch)
-        table_max_width = max(table_max_width, stringWidth(self.cau_contact.user.email, styles["notice"].fontName, styles["notice"].fontSize) + 0.18*inch)
-        table_max_width = max(table_max_width, stringWidth(tz.localtime(self.max_end_date).strftime('%d-%b-%Y'), styles["notice"].fontName, styles["notice"].fontSize) + 0.2*inch)
-        table_max_width = max(table_max_width, stringWidth(tz.localtime(self.max_end_date).strftime('%H:%M'), styles["notice"].fontName, styles["notice"].fontSize) + 0.2*inch)
+            table_max_width = 1.4*inch
+            table_max_width = max(table_max_width, stringWidth(str(self.cau_contact), styles["notice"].fontName, styles["notice"].fontSize)/2 + 0.2*inch)
+            table_max_width = max(table_max_width, stringWidth(str(self.cau_contact.phone_number), styles["notice"].fontName, styles["notice"].fontSize) + 0.2*inch)
+            table_max_width = max(table_max_width, stringWidth(self.cau_contact.user.email, styles["notice"].fontName, styles["notice"].fontSize) + 0.18*inch)
+            table_max_width = max(table_max_width, stringWidth(tz.localtime(self.max_end_date).strftime('%d-%b-%Y'), styles["notice"].fontName, styles["notice"].fontSize) + 0.2*inch)
+            table_max_width = max(table_max_width, stringWidth(tz.localtime(self.max_end_date).strftime('%H:%M'), styles["notice"].fontName, styles["notice"].fontSize) + 0.2*inch)
 
-        # idea: hacer height dinámico, dependiente del contenido de la fila
-        table = Table(table_data, colWidths=[1.5*inch, table_max_width], rowHeights=[0.16*inch, 0.16*inch, 0.16*inch, 0.16*inch, 0.16*inch], hAlign='RIGHT')
-        table.setStyle(TableStyle([]))
-        Story.append(table)
+            # idea: hacer height dinámico, dependiente del contenido de la fila
+            table = Table(table_data, colWidths=[1.5*inch, table_max_width], rowHeights=[0.16*inch, 0.16*inch, 0.16*inch, 0.16*inch, 0.16*inch], hAlign='RIGHT')
+            table.setStyle(TableStyle([]))
+            Story.append(table)
         
         # Draw Horizontal Line
         Story.append(HRFlowable(width=width, thickness=1, lineCap='square', color='#000000'))
@@ -263,14 +278,30 @@ class BaseNotice(SoftDeletionModel):
         counter = 0
         for participant in self.participants.all():
             counter += 1
-            table_data.append([
-                Paragraph(str(counter), styles['table_titles']),
-                Paragraph(str(participant), styles['table_content']),
-                Paragraph(str(participant.rut), styles['table_content']),
-                Paragraph(str(participant.phone_number), styles['table_content']),
-                Paragraph(str(participant.main_emergencycontact), styles['table_content']),
-                Paragraph(str(participant.main_emergencycontact.phone_number), styles['table_content'])
-                ])
+            if participant.main_emergencycontact:
+                print(participant)
+                print(participant.rut)
+                print(participant.phone_number)
+                table_data.append([
+                    Paragraph(str(counter), styles['table_titles']),
+                    Paragraph(str(participant), styles['table_content']),
+                    Paragraph(str(participant.rut), styles['table_content']),
+                    Paragraph(str(participant.phone_number), styles['table_content']),
+                    Paragraph(str(participant.main_emergencycontact), styles['table_content']),
+                    Paragraph(str(participant.main_emergencycontact.phone_number), styles['table_content'])
+                    ])
+            else:
+                print(participant)
+                print(participant.rut)
+                print(participant.phone_number)
+                table_data.append([
+                    Paragraph(str(counter), styles['table_titles']),
+                    Paragraph(str(participant), styles['table_content']),
+                    Paragraph(str(participant.rut), styles['table_content']),
+                    Paragraph(str(participant.phone_number), styles['table_content']),
+                    Paragraph("NO TIENE CONTACTO DE EMERGENCIA", styles['table_content']),
+                    Paragraph("", styles['table_content'])
+                    ])
         
         for friend in self.friends.all():
             counter += 1
@@ -360,17 +391,17 @@ class BaseNotice(SoftDeletionModel):
             counter += 1
             table_data.append([
                 Paragraph(str(participant), styles['table_content']),
-                Paragraph(participant.medicalrecord.sicknesses, styles['table_content']),
-                Paragraph(participant.medicalrecord.medications, styles['table_content']),
-                Paragraph(participant.medicalrecord.comments, styles['table_content']),
+                Paragraph(str(participant.medicalrecord.sicknesses), styles['table_content']),
+                Paragraph(str(participant.medicalrecord.medications), styles['table_content']),
+                Paragraph(str(participant.medicalrecord.comments), styles['table_content']),
                 ])
         for friend in self.friends.all():
             counter += 1
             table_data.append([
                 Paragraph(str(friend), styles['table_content']),
-                Paragraph(friend.sicknesses, styles['table_content']),
-                Paragraph(friend.medications, styles['table_content']),
-                Paragraph(friend.comments, styles['table_content']),
+                Paragraph(str(friend.sicknesses), styles['table_content']),
+                Paragraph(str(friend.medications), styles['table_content']),
+                Paragraph(str(friend.comments), styles['table_content']),
                 ])
 
         table = Table(table_data, colWidths=[2*inch, 2*inch, 2*inch, 1.7*inch], hAlign='LEFT')
@@ -543,9 +574,15 @@ class BaseNotice(SoftDeletionModel):
         ordering = ['status', '-max_end_date']
 
 class ShortNotice(BaseNotice):
-    # definir como asociar members con emergency contacts
+    class Meta:
+        verbose_name = 'Aviso Rápido'
+        verbose_name_plural = 'Avisos Rápidos'
+        ordering = ['-start_date']
+
     def __str__(self):
-        return self.category.name + ": " + self.location + " - " + self.route
+        return str(self.start_date.date()) + " - " + self.category.name + ": " + self.location + " - " + self.route
+
+    # definir como asociar members con emergency contacts
 
 # OJO que esto no está funcionando con basenotice así que recordarlo cuando sea implementado
 @receiver(post_save, sender=ShortNotice)

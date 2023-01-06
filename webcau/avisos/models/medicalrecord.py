@@ -11,8 +11,16 @@ class MedicalRecord(BaseModel):
     medications = models.TextField(null=True, blank=True)
     comments = models.TextField(null=True, blank=True)
     
+    class Meta:
+        verbose_name = "Ficha médica"
+        verbose_name_plural = "Fichas médicas"
+        ordering = ['member']
+    
     def __str__(self):
-        return str(self.member) + " - " + str(self.sicknesses)
+        if self.no_medical_record:
+            return str(self.member) + " - No tiene ficha médica"
+        else:
+            str(self.member) + " - " + str(self.sicknesses)
     
     def pending(self):
         if self.no_medical_record:

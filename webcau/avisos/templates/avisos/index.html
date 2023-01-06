@@ -49,6 +49,8 @@
           {% for aviso in avisos_page %}
             {% if aviso.status == 3 %}
               <div class="card text-center text-bg-info p-0 mb-2 aviso-card" style="width: 20rem; margin-right: 5px; margin-left: 5px;">
+            {% elif aviso.status >= 4 %}
+              <div class="card text-center p-0 mb-2 aviso-card" style="width: 20rem; margin-right: 5px; margin-left: 5px; opacity:0.6;">
             {% else %}
               <div class="card text-center p-0 mb-2 aviso-card" style="width: 20rem; margin-right: 5px; margin-left: 5px;">
             {% endif %}

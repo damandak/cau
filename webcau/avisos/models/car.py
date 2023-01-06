@@ -10,6 +10,11 @@ class Car(SoftDeletionModel):
     color = models.CharField(max_length=100)
     license_plate = models.CharField(max_length=100)
 
+    class Meta:
+        verbose_name = "Vehículo"
+        verbose_name_plural = "Vehículos"
+        ordering = ['member', 'alias']
+
     def delete(self):
       self.member = None
       self.save()

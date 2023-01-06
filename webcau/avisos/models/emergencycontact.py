@@ -16,6 +16,9 @@ class EmergencyContact(SoftDeletionModel):
         constraints = [
             models.UniqueConstraint(fields=['main_contact', 'member'], condition=models.Q(main_contact=True), name='unique_main_contact'),
         ]
+        verbose_name = "Contacto de emergencia"
+        verbose_name_plural = "Contactos de emergencia"
+        ordering = ['member', 'name']
 
     def delete(self):
         self.main_contact = False

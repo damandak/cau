@@ -11,3 +11,4 @@ db.sqlite3
 dump.rdb
 ../erl_crash.dump
 ../dump.rdb
+*.csv

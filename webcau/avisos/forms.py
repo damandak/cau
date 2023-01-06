@@ -8,7 +8,7 @@ from phonenumber_field.widgets import PhoneNumberPrefixWidget
 class MemberForm(forms.ModelForm):
     class Meta:
         model = Member
-        fields = ('profile_image', 'user', 'name', 'middlename', 'first_surname', 'second_surname', 'rut', 'birth_date', 'enrollment_date', 'phone_number', 'use_middlename', 'use_second_surname' )
+        fields = ('profile_image', 'user', 'name', 'middlename', 'first_surname', 'second_surname', 'rut', 'birth_date', 'phone_number', 'use_middlename', 'use_second_surname' )
         widgets = {
             'user': forms.HiddenInput(),
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -22,13 +22,6 @@ class MemberForm(forms.ModelForm):
                     'type': 'date', 
                     'class': 'form-control',
                     }
-                ),
-            'enrollment_date': forms.DateInput(
-                format= '%Y-%m-%d',
-                attrs={
-                  'type': 'date',
-                  'class': 'form-control'
-                  }
                 ),
             'phone_number': PhoneNumberPrefixWidget(initial='CL', attrs={'class': 'form-control'}),
             'use_middlename': forms.CheckboxInput(attrs={'class': 'form-check-inline'}),
@@ -45,7 +38,6 @@ class MemberForm(forms.ModelForm):
             'second_surname': 'Apellido Materno',
             'rut': 'RUT',
             'birth_date': 'Fecha de Nacimiento',
-            'enrollment_date': 'Fecha de Ingreso',
             'phone_number': 'Número de Teléfono',
             'use_middlename': 'Usar Segundo Nombre',
             'use_second_surname': 'Usar Apellido Materno',
@@ -189,6 +181,7 @@ class CarForm(forms.ModelForm):
         }
         exclude = ['member']
         action = forms.CharField(max_length=60, widget=forms.HiddenInput())
+
 class ShortNoticeForm(forms.ModelForm):
     category = forms.ModelChoiceField(
       queryset=NoticeCategory.objects.order_by('priority'), 
@@ -268,7 +261,6 @@ class ShortNoticeForm(forms.ModelForm):
           'route',
           'start_date',
           'max_end_date',
-          'cau_contact',
           'participants',
         }
         help_texts = {

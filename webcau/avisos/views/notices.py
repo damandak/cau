@@ -78,9 +78,7 @@ class FriendsAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs_temp
         else:
             qs = qs.filter(member=self.request.user.member)
-        if self.q:
-            qs = qs.filter(license_plate__istartswith=self.q)
-
+            
         return qs
 
 ###############################################################################
