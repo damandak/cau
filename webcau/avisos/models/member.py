@@ -14,7 +14,7 @@ class Member(SoftDeletionModel):
     middlename = models.CharField(max_length=100, blank=True)
     first_surname = models.CharField(max_length=100)
     second_surname = models.CharField(max_length=100, blank=True)
-    rut = models.CharField(max_length=20, unique=True)
+    rut = models.CharField(max_length=20, null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
     enrollment_date = models.DateField(null=True, blank=True)
     phone_number = PhoneNumberField(null=True, blank=True)
@@ -45,6 +45,13 @@ class Member(SoftDeletionModel):
                 surnames = self.first_surname + " " + last
             return names + " " + surnames
         return self.user.username
+    
+    def save(self, *args, **kwargs):
+        if self.rut:
+            exists = Member.objects.filter(rut=self.rut).exclude(pk=self.pk).exists()
+            if exists:
+                raise ValidationError("Ya existe un socio con este rut.")
+        super().save(*args, **kwargs)
 
     @property
     def main_emergencycontact(self):
