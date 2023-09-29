@@ -7,6 +7,7 @@ db.sqlite3
 .DS_Store
 .env
 /cau
+/venv
 /webcau/node_modules
 dump.rdb
 ../erl_crash.dump
